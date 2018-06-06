@@ -11,46 +11,12 @@
 //                 Vinicius Chagas
 //
 
-// Arquivos "headers" padrões de C podem ser incluídos em um
-// programa C++, sendo necessário somente adicionar o caractere
-// "c" antes de seu nome, e remover o sufixo ".h". Exemplo:
-//    #include <stdio.h> // Em C
-//  vira
-//    #include <cstdio> // Em C++
-//
-#include <cmath>
-#include <cstdio>
-#include <cstdlib>
-
-// Headers abaixo são específicos de C++
-#include <map>
-#include <stack>
-#include <string>
-#include <vector>
-#include <limits>
-#include <fstream>
-#include <sstream>
-#include <stdexcept>
-#include <algorithm>
-
-// Headers das bibliotecas OpenGL
-#include <glad/glad.h>   // Criação de contexto OpenGL 3.3
-#include <GLFW/glfw3.h>  // Criação de janelas do sistema operacional
-
-// Headers da biblioteca GLM: criação de matrizes e vetores.
-#include <glm/mat4x4.hpp>
-#include <glm/vec4.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-// Headers da biblioteca para carregar modelos obj
-#include <tiny_obj_loader.h>
-
-#include <stb_image.h>
+#include <iostream>
 
 // Headers locais, definidos na pasta "include/"
-#include "utils.h"
-#include "matrices.h"
+
 #include "fcg_util.hpp"
+
 
 int main(int argc, char* argv[])
 {
@@ -131,9 +97,12 @@ int main(int argc, char* argv[])
     ComputeNormals(&spheremodel);
     BuildTrianglesAndAddToVirtualScene(&spheremodel);
 
-    ObjModel bunnymodel("../../data/cow.obj");
-    ComputeNormals(&bunnymodel);
-    BuildTrianglesAndAddToVirtualScene(&bunnymodel);
+    ///ObjModel bunnymodel("../../data/cow.obj");
+    ///ComputeNormals(&bunnymodel);
+    ///BuildTrianglesAndAddToVirtualScene(&bunnymodel);
+    Object falcon("falcon","../../data/cow.obj");
+    ComputeNormals(&(falcon.model));
+    BuildTrianglesAndAddToVirtualScene(&(falcon.model));
 
     ObjModel planemodel("../../data/plane.obj");
     ComputeNormals(&planemodel);
