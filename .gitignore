@@ -1,0 +1,4 @@
+.idea
+bin/Debug/fcg.dSYM
+cmake-build-debug
+bin/Debug
