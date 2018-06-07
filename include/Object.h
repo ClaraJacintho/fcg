@@ -1,10 +1,14 @@
 #ifndef _OBJECT_H
 #define _OBJECT_H
+
 #include <string>
 #include <tiny_obj_loader.h>
 
+
 using namespace std;
 
+// Estrutura que representa um modelo geométrico carregado a partir de um
+// arquivo ".obj". Veja https://en.wikipedia.org/wiki/Wavefront_.obj_file .
 struct ObjModel
 {
     tinyobj::attrib_t                 attrib;
@@ -29,14 +33,15 @@ struct ObjModel
         printf("OK.\n");
     }
 };
-
 struct ls_cord {
     float x,y,z;
 } typedef cord;
 
+
+//std::map<std::string, SceneObject> g_VirtualScene;
+
 class Object
 {
-    string name;
     cord scale;
     cord pos;   //Position X, Y and Z
     cord rad;   //Angles of rotation X, Y and Z
@@ -44,14 +49,28 @@ class Object
 
 
     public:
+        string name;
         ObjModel model; //Vertices etc
         Object(string name, const char *file_name, const char *mtl_basepath = NULL);
-        virtual ~Object();
+        void render();
+        cord getPos();
+        cord getRad();
+        cord getScale();
+        void setPos(float x, float y, float z);
+        void setRad(float x, float y, float z);
+        void setScale(float x, float y, float z);
+
+
+        ///TO DO: fcg_util functions that should probably be here
+
+        /// void DrawVirtualObject(const char* object_name);
+        /// void ComputeNormals(ObjModel* model);
+        ///void BuildTrianglesAndAddToVirtualScene(ObjModel* model);
 
 
     protected:
 
-    private:
 };
+
 
 #endif // _OBJECT_H

@@ -24,9 +24,11 @@
 	<inttypes.h>
 	<stdint.h>
 
-1528315163 source:c:\users\maria\desktop\fcg\src\main.cpp
+1528336300 source:c:\users\maria\desktop\fcg\src\main.cpp
 	<iostream>
 	"fcg_util.hpp"
+	"Object.h"
+	"utils.h"
 
 1528243425 c:\users\maria\desktop\fcg\include\glfw\glfw3.h
 	<stddef.h>
@@ -482,7 +484,7 @@
 	<intrin.h>
 	<arm_neon.h>
 
-1528243425 c:\users\maria\desktop\fcg\include\utils.h
+1528334398 c:\users\maria\desktop\fcg\include\utils.h
 	<cstdio>
 
 1528315101 c:\users\maria\desktop\fcg\include\matrices.h
@@ -508,7 +510,7 @@
 1528243426 c:\users\maria\desktop\fcg\include\glm\matrix.hpp
 	"detail/func_matrix.hpp"
 
-1528315623 c:\users\maria\desktop\fcg\include\fcg_util.hpp
+1528336293 c:\users\maria\desktop\fcg\include\fcg_util.hpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -531,10 +533,10 @@
 	"matrices.h"
 	"Object.h"
 
-1528315585 source:c:\users\maria\desktop\fcg\src\object.cpp
+1528336300 source:c:\users\maria\desktop\fcg\src\object.cpp
 	"Object.h"
 
-1528315623 c:\users\maria\desktop\fcg\include\object.h
+1528336300 c:\users\maria\desktop\fcg\include\object.h
 	<string>
 	<tiny_obj_loader.h>
 

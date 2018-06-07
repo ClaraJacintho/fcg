@@ -11,11 +11,14 @@
 //                 Vinicius Chagas
 //
 
-#include <iostream>
 
+#include <iostream>
+#include "fcg_util.hpp"
 // Headers locais, definidos na pasta "include/"
 
-#include "fcg_util.hpp"
+
+#include "Object.h"
+#include "utils.h"
 
 
 int main(int argc, char* argv[])
@@ -94,24 +97,26 @@ int main(int argc, char* argv[])
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ObjModel spheremodel("../../data/sphere.obj");
-    ComputeNormals(&spheremodel);
-    BuildTrianglesAndAddToVirtualScene(&spheremodel);
+    //ComputeNormals(&spheremodel);
+    //BuildTrianglesAndAddToVirtualScene(&spheremodel);
 
     ///ObjModel bunnymodel("../../data/cow.obj");
     ///ComputeNormals(&bunnymodel);
     ///BuildTrianglesAndAddToVirtualScene(&bunnymodel);
-    Object falcon("falcon","../../data/cow.obj");
-    ComputeNormals(&(falcon.model));
-    BuildTrianglesAndAddToVirtualScene(&(falcon.model));
+    Object cow("cow","../../data/cow.obj");
+    ComputeNormals(&(cow.model));
+    BuildTrianglesAndAddToVirtualScene(&(cow.model));
+    ///cow.ComputeNormals(&(cow.model));
+    ///cow.BuildTrianglesAndAddToVirtualScene(&(cow.model));
 
     ObjModel planemodel("../../data/plane.obj");
-    ComputeNormals(&planemodel);
-    BuildTrianglesAndAddToVirtualScene(&planemodel);
+   // ComputeNormals(&planemodel);
+    //BuildTrianglesAndAddToVirtualScene(&planemodel);
 
     if ( argc > 1 )
     {
         ObjModel model(argv[1]);
-        BuildTrianglesAndAddToVirtualScene(&model);
+       // BuildTrianglesAndAddToVirtualScene(&model);
     }
 
     // Inicializamos o código para renderização de texto.
@@ -217,26 +222,30 @@ int main(int argc, char* argv[])
         #define PLANE  2
 
         // Desenhamos o modelo da esfera
-        model = Matrix_Translate(-1.0f,0.0f,0.0f)
-              * Matrix_Rotate_Z(0.6f)
-              * Matrix_Rotate_X(0.2f)
-              * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f);
-        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(object_id_uniform, SPHERE);
-        DrawVirtualObject("sphere");
+      //  model = Matrix_Translate(-1.0f,0.0f,0.0f)
+      //        * Matrix_Rotate_Z(0.6f)
+     //         * Matrix_Rotate_X(0.2f)
+    //          * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f);
+    //    glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+     //   glUniform1i(object_id_uniform, SPHERE);
+     //   DrawVirtualObject("sphere");
 
         // Desenhamos o modelo do coelho
-        model = Matrix_Translate(1.0f,0.0f,0.0f)
-              * Matrix_Rotate_X(g_AngleX + (float)glfwGetTime() * 0.1f);
+        cow.setPos(1.0f,0.0f,0.0f);
+        float angle_X = g_AngleX + (float)glfwGetTime() * 0.1f;
+        cow.setRad(angle_X, 0.0f, 0.0f);
+
+        model = Matrix_Translate(cow.getPos().x,cow.getPos().y,cow.getPos().z)
+              * Matrix_Rotate_X(cow.getRad().x);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, BUNNY);
-        DrawVirtualObject("cow");
+        DrawVirtualObject(cow.name.c_str());
 
         // Desenhamos o plano do chão
-        model = Matrix_Translate(0.0f,-1.1f,0.0f);
-        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(object_id_uniform, PLANE);
-        DrawVirtualObject("plane");
+   //     model = Matrix_Translate(0.0f,-1.1f,0.0f);
+   //     glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+   //     glUniform1i(object_id_uniform, PLANE);
+  //      DrawVirtualObject("plane");
 
         // Pegamos um vértice com coordenadas de modelo (0.5, 0.5, 0.5, 1) e o
         // passamos por todos os sistemas de coordenadas armazenados nas
