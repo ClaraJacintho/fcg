@@ -42,26 +42,20 @@ struct ls_cord {
 
 class Object
 {
-    cord scale;
-    cord pos;   //Position X, Y and Z
-    cord rad;   //Angles of rotation X, Y and Z
-
-
-
     public:
         string name;
+        cord scale;
+        cord pos;   //Position X, Y and Z
+        cord rad;   //Angles of rotation X, Y and Z
         ObjModel model; //Vertices etc
+
         Object(string name, const char *file_name, const char *mtl_basepath = NULL);
-        void render();
-        cord getPos();
-        cord getRad();
-        cord getScale();
+
         void setPos(float x, float y, float z);
-        void setRad(float x, float y, float z);
         void setScale(float x, float y, float z);
 
 
-        ///TO DO: fcg_util functions that should probably be here
+        ///TO DO: fcg_util dfunctions that should probably be here
 
         /// void DrawVirtualObject(const char* object_name);
         /// void ComputeNormals(ObjModel* model);

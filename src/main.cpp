@@ -19,7 +19,9 @@
 
 #include "Object.h"
 #include "utils.h"
+#include "Player.h"
 
+Player player;
 
 int main(int argc, char* argv[])
 {
@@ -53,6 +55,8 @@ int main(int argc, char* argv[])
         fprintf(stderr, "ERROR: glfwCreateWindow() failed.\n");
         std::exit(EXIT_FAILURE);
     }
+
+
 
     // Definimos a função de callback que será chamada sempre que o usuário
     // pressionar alguma tecla do teclado ...
@@ -103,11 +107,19 @@ int main(int argc, char* argv[])
     ///ObjModel bunnymodel("../../data/cow.obj");
     ///ComputeNormals(&bunnymodel);
     ///BuildTrianglesAndAddToVirtualScene(&bunnymodel);
-    Object cow("cow","../../data/cow.obj");
-    ComputeNormals(&(cow.model));
-    BuildTrianglesAndAddToVirtualScene(&(cow.model));
+   // Object cow("cow","../../data/cow.obj");
+    //ComputeNormals(&(cow.model));
+    //BuildTrianglesAndAddToVirtualScene(&(cow.model));
+    //cow("cow","../../data/cow.obj");
+    //ComputeNormals(&(cow.model));
+    //BuildTrianglesAndAddToVirtualScene(&(cow.model));
     ///cow.ComputeNormals(&(cow.model));
     ///cow.BuildTrianglesAndAddToVirtualScene(&(cow.model));
+
+    ComputeNormals(&(player.model));
+    BuildTrianglesAndAddToVirtualScene(&(player.model));
+    player.setPos(0.0f,-1.0f,0.0f);
+    player.rad.y = 1.5708f;
 
     ObjModel planemodel("../../data/plane.obj");
    // ComputeNormals(&planemodel);
@@ -231,15 +243,16 @@ int main(int argc, char* argv[])
      //   DrawVirtualObject("sphere");
 
         // Desenhamos o modelo do coelho
-        cow.setPos(1.0f,0.0f,0.0f);
-        float angle_X = g_AngleX + (float)glfwGetTime() * 0.1f;
-        cow.setRad(angle_X, 0.0f, 0.0f);
+        //player.rad.x = g_AngleX + (float)glfwGetTime() * 0.1f;
+        player.update_player(glfwGetTime());
 
-        model = Matrix_Translate(cow.getPos().x,cow.getPos().y,cow.getPos().z)
-              * Matrix_Rotate_X(cow.getRad().x);
+        model = Matrix_Translate(player.pos.x,player.pos.y,player.pos.z)
+              * Matrix_Rotate_X(player.rad.x)
+              * Matrix_Rotate_Y(player.rad.y)
+              * Matrix_Rotate_Z(player.rad.z);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, BUNNY);
-        DrawVirtualObject(cow.name.c_str());
+        DrawVirtualObject(player.name.c_str());
 
         // Desenhamos o plano do chão
    //     model = Matrix_Translate(0.0f,-1.1f,0.0f);
@@ -285,4 +298,107 @@ int main(int argc, char* argv[])
 
     // Fim do programa
     return 0;
+}
+
+// Definição da função que será chamada sempre que o usuário pressionar alguma
+// tecla do teclado. Veja http://www.glfw.org/docs/latest/input_guide.html#input_key
+void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
+{
+    // Se o usuário pressionar a tecla ESC, fechamos a janela.
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, GL_TRUE);
+
+    // O código abaixo implementa a seguinte lógica:
+    //   Se apertar tecla X       então g_AngleX += delta;
+    //   Se apertar tecla shift+X então g_AngleX -= delta;
+    //   Se apertar tecla Y       então g_AngleY += delta;
+    //   Se apertar tecla shift+Y então g_AngleY -= delta;
+    //   Se apertar tecla Z       então g_AngleZ += delta;
+    //   Se apertar tecla shift+Z então g_AngleZ -= delta;
+
+    float delta = 3.141592 / 16; // 22.5 graus, em radianos.
+
+    if (key == GLFW_KEY_X && action == GLFW_PRESS)
+    {
+        g_AngleX += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
+    }
+
+    if (key == GLFW_KEY_Y && action == GLFW_PRESS)
+    {
+        g_AngleY += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
+    }
+    if (key == GLFW_KEY_Z && action == GLFW_PRESS)
+    {
+        g_AngleZ += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
+    }
+
+    // Se o usuário apertar a tecla espaço, resetamos os ângulos de Euler para zero.
+    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+    {
+        g_AngleX = 0.0f;
+        g_AngleY = 0.0f;
+        g_AngleZ = 0.0f;
+        g_ForearmAngleX = 0.0f;
+        g_ForearmAngleZ = 0.0f;
+        g_TorsoPositionX = 0.0f;
+        g_TorsoPositionY = 0.0f;
+    }
+
+    // Se o usuário apertar a tecla P, utilizamos projeção perspectiva.
+    if (key == GLFW_KEY_P && action == GLFW_PRESS)
+    {
+        g_UsePerspectiveProjection = true;
+    }
+
+    // Se o usuário apertar a tecla O, utilizamos projeção ortográfica.
+    if (key == GLFW_KEY_O && action == GLFW_PRESS)
+    {
+        g_UsePerspectiveProjection = false;
+    }
+
+    // Se o usuário apertar a tecla H, fazemos um "toggle" do texto informativo mostrado na tela.
+    if (key == GLFW_KEY_H && action == GLFW_PRESS)
+    {
+        g_ShowInfoText = !g_ShowInfoText;
+    }
+
+    // Se o usuário apertar a tecla R, recarregamos os shaders dos arquivos "shader_fragment.glsl" e "shader_vertex.glsl".
+    if (key == GLFW_KEY_R && action == GLFW_PRESS)
+    {
+        LoadShadersFromFiles();
+        fprintf(stdout,"Shaders recarregados!\n");
+        fflush(stdout);
+    }
+    if (key == GLFW_KEY_D  && action == GLFW_PRESS){
+        player.move_right();
+    }
+    if (key == GLFW_KEY_A && action == GLFW_PRESS){
+        player.move_left();
+    }
+       if (key == GLFW_KEY_W  && action == GLFW_PRESS){
+        player.move_up();
+    }
+    if (key == GLFW_KEY_S && action == GLFW_PRESS){
+        player.move_down();
+    }
+       if (key == GLFW_KEY_Q  && action == GLFW_PRESS){
+        player.move_foward();
+    }
+    if (key == GLFW_KEY_E && action == GLFW_PRESS){
+        player.move_backwards();
+    }
+    if (key == GLFW_KEY_D  && action == GLFW_RELEASE){
+        player.unturn_right();
+    }
+    if (key == GLFW_KEY_A && action == GLFW_RELEASE){
+        player.unturn_left();
+    }
+       if (key == GLFW_KEY_W  && action == GLFW_RELEASE){
+        player.unturn_up();
+    }
+    if (key == GLFW_KEY_S && action == GLFW_RELEASE){
+        player.unturn_down();
+    }
+
+
 }

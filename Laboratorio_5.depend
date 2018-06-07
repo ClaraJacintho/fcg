@@ -24,11 +24,12 @@
 	<inttypes.h>
 	<stdint.h>
 
-1528336300 source:c:\users\maria\desktop\fcg\src\main.cpp
+1528340428 source:c:\users\maria\desktop\fcg\src\main.cpp
 	<iostream>
 	"fcg_util.hpp"
 	"Object.h"
 	"utils.h"
+	"Player.h"
 
 1528243425 c:\users\maria\desktop\fcg\include\glfw\glfw3.h
 	<stddef.h>
@@ -510,7 +511,7 @@
 1528243426 c:\users\maria\desktop\fcg\include\glm\matrix.hpp
 	"detail/func_matrix.hpp"
 
-1528336293 c:\users\maria\desktop\fcg\include\fcg_util.hpp
+1528338128 c:\users\maria\desktop\fcg\include\fcg_util.hpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -533,10 +534,10 @@
 	"matrices.h"
 	"Object.h"
 
-1528336300 source:c:\users\maria\desktop\fcg\src\object.cpp
+1528338428 source:c:\users\maria\desktop\fcg\src\object.cpp
 	"Object.h"
 
-1528336300 c:\users\maria\desktop\fcg\include\object.h
+1528338428 c:\users\maria\desktop\fcg\include\object.h
 	<string>
 	<tiny_obj_loader.h>
 
@@ -558,4 +559,10 @@
 
 1528243439 source:c:\users\maria\desktop\fcg\src\tiny_obj_loader.cpp
 	"tiny_obj_loader.h"
+
+1528340415 source:c:\users\maria\desktop\fcg\src\player.cpp
+	"Player.h"
+
+1528340736 c:\users\maria\desktop\fcg\include\player.h
+	"Object.h"
 
