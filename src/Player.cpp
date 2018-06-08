@@ -1,7 +1,8 @@
+#include <iostream>
 #include "Player.h"
 
 bool turned_x;
-bool turned_y;
+bool turned_z;
 
 Player::Player():Object("cow", "../../data/cow.obj")
 {
@@ -17,19 +18,18 @@ Player::~Player()
 
 void Player::move_right(){
     this->speed.x += SPEED_INCREMENT;
-    if(turned_y == false){
-        printf("DINGUE");
+    if(turned_z == false){
         this->rad.y -= TURN_ANGLE;
-        turned_y = true;
+        turned_z = true;
     }
 
 }
 
 void Player::move_left(){
     this->speed.x -= SPEED_INCREMENT;
-    if(turned_y == false){
+    if(turned_z == false){
         this->rad.y += TURN_ANGLE;
-        turned_y = true;
+        turned_z = true;
     }
 
 }
@@ -56,25 +56,27 @@ void Player::move_foward(){
 }
 
 void Player::move_backwards(){
-    printf("AA");
     this->speed.z -= SPEED_INCREMENT;
 }
 
-void Player::update_player(double time){
+void Player::update_player(double time, vector<Object*> objs){
     double delta_t = time - this->last_update;
+    checkCollision(objs);
 
-    this->pos.x += speed.x;
-    this->pos.y += speed.y;
-    this->pos.z += speed.z;
+    this->pos.x += speed.x*delta_t;
+    this->pos.y += speed.y*delta_t;
+    this->pos.z += speed.z*delta_t;
+
+    this->last_update = time;
 }
 
 void Player::unturn_left(){
     this->rad.y -= TURN_ANGLE;
-    turned_y = false;
+    turned_z = false;
 }
 void Player::unturn_right(){
     this->rad.y += TURN_ANGLE;
-    turned_y = false;
+    turned_z = false;
 }
 void Player::unturn_up(){
     this->rad.x -= TURN_ANGLE;
@@ -86,4 +88,30 @@ void Player::unturn_down(){
 }
 
 
+void Player::checkCollision(vector<Object*> vect){
+    for(auto const a : vect){
+       if(a->name != this->name){
+            bool col_x =false;
+            bool col_y =false;
+            bool col_z =false;
+            if(this->bbox_max.x + this->pos.x >= a->bbox_min.x + a->pos.x && a->bbox_max.x+a->pos.x >= this->bbox_min.x+this->pos.x) {
+                col_x = true;
+            }
+
+            if(this->bbox_max.y + this->pos.y >= a->bbox_min.y + a->pos.y && a->bbox_max.y+a->pos.y >= this->bbox_min.y+this->pos.y) {
+                col_y = true;
+            }
+
+            if(this->bbox_max.z + this->pos.z >= a->bbox_min.z + a->pos.z && a->bbox_max.z+a->pos.z >= this->bbox_min.z+this->pos.z) {
+                col_z = true;
+            }
+
+            if(col_x && col_y && col_z){
+                a->destroyed = true;
+                printf("Destroyed %s\n", a->name.c_str());
+            }
+       }
+
+    }
+}
 

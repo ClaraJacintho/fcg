@@ -378,7 +378,7 @@ void ComputeNormals(ObjModel* model)
     }
 }
 
-void BuildTrianglesAndAddToVirtualScene(ObjModel* model)
+void BuildTrianglesAndAddToVirtualScene(Object* obj)
 {
     GLuint vertex_array_object_id;
     glGenVertexArrays(1, &vertex_array_object_id);
@@ -389,10 +389,10 @@ void BuildTrianglesAndAddToVirtualScene(ObjModel* model)
     std::vector<float>  normal_coefficients;
     std::vector<float>  texture_coefficients;
 
-    for (size_t shape = 0; shape < model->shapes.size(); ++shape)
+    for (size_t shape = 0; shape < (obj->model).shapes.size(); ++shape)
     {
         size_t first_index = indices.size();
-        size_t num_triangles = model->shapes[shape].mesh.num_face_vertices.size();
+        size_t num_triangles = (obj->model).shapes[shape].mesh.num_face_vertices.size();
 
         const float minval = std::numeric_limits<float>::min();
         const float maxval = std::numeric_limits<float>::max();
@@ -402,17 +402,17 @@ void BuildTrianglesAndAddToVirtualScene(ObjModel* model)
 
         for (size_t triangle = 0; triangle < num_triangles; ++triangle)
         {
-            assert(model->shapes[shape].mesh.num_face_vertices[triangle] == 3);
+            assert((obj->model).shapes[shape].mesh.num_face_vertices[triangle] == 3);
 
             for (size_t vertex = 0; vertex < 3; ++vertex)
             {
-                tinyobj::index_t idx = model->shapes[shape].mesh.indices[3*triangle + vertex];
+                tinyobj::index_t idx = (obj->model).shapes[shape].mesh.indices[3*triangle + vertex];
 
                 indices.push_back(first_index + 3*triangle + vertex);
 
-                const float vx = model->attrib.vertices[3*idx.vertex_index + 0];
-                const float vy = model->attrib.vertices[3*idx.vertex_index + 1];
-                const float vz = model->attrib.vertices[3*idx.vertex_index + 2];
+                const float vx = (obj->model).attrib.vertices[3*idx.vertex_index + 0];
+                const float vy = (obj->model).attrib.vertices[3*idx.vertex_index + 1];
+                const float vz = (obj->model).attrib.vertices[3*idx.vertex_index + 2];
                 //printf("tri %d vert %d = (%.2f, %.2f, %.2f)\n", (int)triangle, (int)vertex, vx, vy, vz);
                 model_coefficients.push_back( vx ); // X
                 model_coefficients.push_back( vy ); // Y
@@ -433,9 +433,9 @@ void BuildTrianglesAndAddToVirtualScene(ObjModel* model)
 
                 if ( idx.normal_index != -1 )
                 {
-                    const float nx = model->attrib.normals[3*idx.normal_index + 0];
-                    const float ny = model->attrib.normals[3*idx.normal_index + 1];
-                    const float nz = model->attrib.normals[3*idx.normal_index + 2];
+                    const float nx = (obj->model).attrib.normals[3*idx.normal_index + 0];
+                    const float ny = (obj->model).attrib.normals[3*idx.normal_index + 1];
+                    const float nz = (obj->model).attrib.normals[3*idx.normal_index + 2];
                     normal_coefficients.push_back( nx ); // X
                     normal_coefficients.push_back( ny ); // Y
                     normal_coefficients.push_back( nz ); // Z
@@ -444,8 +444,8 @@ void BuildTrianglesAndAddToVirtualScene(ObjModel* model)
 
                 if ( idx.texcoord_index != -1 )
                 {
-                    const float u = model->attrib.texcoords[2*idx.texcoord_index + 0];
-                    const float v = model->attrib.texcoords[2*idx.texcoord_index + 1];
+                    const float u = (obj->model).attrib.texcoords[2*idx.texcoord_index + 0];
+                    const float v = (obj->model).attrib.texcoords[2*idx.texcoord_index + 1];
                     texture_coefficients.push_back( u );
                     texture_coefficients.push_back( v );
                 }
@@ -455,7 +455,7 @@ void BuildTrianglesAndAddToVirtualScene(ObjModel* model)
         size_t last_index = indices.size() - 1;
 
         SceneObject theobject;
-        theobject.name           = model->shapes[shape].name;
+        theobject.name           = (obj->model).shapes[shape].name;
         theobject.first_index    = (void*)first_index; // Primeiro índice
         theobject.num_indices    = last_index - first_index + 1; // Número de indices
         theobject.rendering_mode = GL_TRIANGLES;       // Índices correspondem ao tipo de rasterização GL_TRIANGLES.
@@ -464,7 +464,14 @@ void BuildTrianglesAndAddToVirtualScene(ObjModel* model)
         theobject.bbox_min = bbox_min;
         theobject.bbox_max = bbox_max;
 
-        g_VirtualScene[model->shapes[shape].name] = theobject;
+        obj->bbox_min.x = bbox_min.x;
+        obj->bbox_min.y = bbox_min.y;
+        obj->bbox_min.z = bbox_min.z;
+        obj->bbox_max.x = bbox_max.x;
+        obj->bbox_max.y = bbox_max.y;
+        obj->bbox_max.z = bbox_max.z;
+
+        g_VirtualScene[(obj->model).shapes[shape].name] = theobject;
     }
 
     GLuint VBO_model_coefficients_id;

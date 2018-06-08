@@ -100,31 +100,30 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");      // TextureImage0
     LoadTextureImage("../../data/tc-earth_nightmap_citylights.gif"); // TextureImage1
 
+    vector<Object*> objects;
     // Construímos a representação de objetos geométricos através de malhas de triângulos
-    ObjModel spheremodel("../../data/sphere.obj");
-    //ComputeNormals(&spheremodel);
-    //BuildTrianglesAndAddToVirtualScene(&spheremodel);
-
-    ///ObjModel bunnymodel("../../data/cow.obj");
-    ///ComputeNormals(&bunnymodel);
-    ///BuildTrianglesAndAddToVirtualScene(&bunnymodel);
-   // Object cow("cow","../../data/cow.obj");
-    //ComputeNormals(&(cow.model));
-    //BuildTrianglesAndAddToVirtualScene(&(cow.model));
-    //cow("cow","../../data/cow.obj");
-    //ComputeNormals(&(cow.model));
-    //BuildTrianglesAndAddToVirtualScene(&(cow.model));
-    ///cow.ComputeNormals(&(cow.model));
-    ///cow.BuildTrianglesAndAddToVirtualScene(&(cow.model));
 
     ComputeNormals(&(player.model));
-    BuildTrianglesAndAddToVirtualScene(&(player.model));
+    BuildTrianglesAndAddToVirtualScene(&player);
     player.setPos(0.0f,-1.0f,0.0f);
     player.rad.y = 1.5708f;
+    objects.push_back(&player);
 
-    ObjModel planemodel("../../data/plane.obj");
-   // ComputeNormals(&planemodel);
-    //BuildTrianglesAndAddToVirtualScene(&planemodel);
+    Object sphere("sphere","../../data/sphere.obj");
+    ComputeNormals(&(sphere.model));
+    BuildTrianglesAndAddToVirtualScene(&sphere);
+    sphere.setPos(1.0f,1.0f,-1.0f);
+    sphere.setScale(0.5f,0.5f,0.5f);
+    sphere.proj_type = 1;
+    objects.push_back(&sphere);
+
+    Object plane("plane","../../data/plane.obj");
+    ComputeNormals(&(plane.model));
+    BuildTrianglesAndAddToVirtualScene(&plane);
+    plane.setPos(0.0f, -2.0f, 0.0f);
+    plane.setScale(2.0f,2.0f,2.0f);
+    plane.proj_type = 3;
+    objects.push_back(&plane);
 
     if ( argc > 1 )
     {
@@ -148,6 +147,8 @@ int main(int argc, char* argv[])
     glm::mat4 the_projection;
     glm::mat4 the_model;
     glm::mat4 the_view;
+
+    int number_of_objects = g_VirtualScene.size();
 
     // Ficamos em loop, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window))
@@ -179,10 +180,12 @@ int main(int argc, char* argv[])
         float z = r*cos(g_CameraPhi)*cos(g_CameraTheta);
         float x = r*cos(g_CameraPhi)*sin(g_CameraTheta);
 
+         player.update_player(glfwGetTime(),objects);
+
         // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
         // Veja slides 165-175 do documento "Aula_08_Sistemas_de_Coordenadas.pdf".
-        glm::vec4 camera_position_c  = glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
-        glm::vec4 camera_lookat_l    = glm::vec4(0.0f,0.0f,0.0f,1.0f); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
+        glm::vec4 camera_position_c  = glm::vec4(player.pos.x,player.pos.y+2.0f,player.pos.z+3.0f,1.0f); // Ponto "c", centro da câmera
+        glm::vec4 camera_lookat_l    = glm::vec4(player.pos.x,player.pos.y,player.pos.z,1.0f); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
         glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c; // Vetor "view", sentido para onde a câmera está virada
         glm::vec4 camera_up_vector   = glm::vec4(0.0f,1.0f,0.0f,0.0f); // Vetor "up" fixado para apontar para o "céu" (eito Y global)
 
@@ -230,30 +233,25 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(view_uniform       , 1 , GL_FALSE , glm::value_ptr(view));
         glUniformMatrix4fv(projection_uniform , 1 , GL_FALSE , glm::value_ptr(projection));
 
-        #define SPHERE 0
-        #define BUNNY  1
-        #define PLANE  2
 
-        // Desenhamos o modelo da esfera
-      //  model = Matrix_Translate(-1.0f,0.0f,0.0f)
-      //        * Matrix_Rotate_Z(0.6f)
-     //         * Matrix_Rotate_X(0.2f)
-    //          * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f);
-    //    glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-     //   glUniform1i(object_id_uniform, SPHERE);
-     //   DrawVirtualObject("sphere");
 
-        // Desenhamos o modelo do coelho
-        //player.rad.x = g_AngleX + (float)glfwGetTime() * 0.1f;
-        player.update_player(glfwGetTime());
 
-        model = Matrix_Translate(player.pos.x,player.pos.y,player.pos.z)
-              * Matrix_Rotate_X(player.rad.x)
-              * Matrix_Rotate_Y(player.rad.y)
-              * Matrix_Rotate_Z(player.rad.z);
-        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(object_id_uniform, BUNNY);
-        DrawVirtualObject(player.name.c_str());
+        for(int i = 0; i < number_of_objects; i++){
+            if(objects[i]->destroyed == false){
+                model = Matrix_Translate(objects[i]->pos.x,objects[i]->pos.y,objects[i]->pos.z)
+                    * Matrix_Scale(objects[i]->scale.x,objects[i]->scale.y,objects[i]->scale.z)
+                    * Matrix_Rotate_X(objects[i]->rad.x)
+                    * Matrix_Rotate_Y(objects[i]->rad.y)
+                    * Matrix_Rotate_Z(objects[i]->rad.z);
+                glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+                glUniform1i(object_id_uniform, objects[i]->proj_type);
+                DrawVirtualObject(objects[i]->name.c_str());
+            }
+        }
+
+
+
+
 
         // Desenhamos o plano do chão
    //     model = Matrix_Translate(0.0f,-1.1f,0.0f);
@@ -309,41 +307,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
 
-    // O código abaixo implementa a seguinte lógica:
-    //   Se apertar tecla X       então g_AngleX += delta;
-    //   Se apertar tecla shift+X então g_AngleX -= delta;
-    //   Se apertar tecla Y       então g_AngleY += delta;
-    //   Se apertar tecla shift+Y então g_AngleY -= delta;
-    //   Se apertar tecla Z       então g_AngleZ += delta;
-    //   Se apertar tecla shift+Z então g_AngleZ -= delta;
-
     float delta = 3.141592 / 16; // 22.5 graus, em radianos.
-
-    if (key == GLFW_KEY_X && action == GLFW_PRESS)
-    {
-        g_AngleX += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
-
-    if (key == GLFW_KEY_Y && action == GLFW_PRESS)
-    {
-        g_AngleY += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
-    if (key == GLFW_KEY_Z && action == GLFW_PRESS)
-    {
-        g_AngleZ += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
-    }
-
-    // Se o usuário apertar a tecla espaço, resetamos os ângulos de Euler para zero.
-    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-    {
-        g_AngleX = 0.0f;
-        g_AngleY = 0.0f;
-        g_AngleZ = 0.0f;
-        g_ForearmAngleX = 0.0f;
-        g_ForearmAngleZ = 0.0f;
-        g_TorsoPositionX = 0.0f;
-        g_TorsoPositionY = 0.0f;
-    }
 
     // Se o usuário apertar a tecla P, utilizamos projeção perspectiva.
     if (key == GLFW_KEY_P && action == GLFW_PRESS)

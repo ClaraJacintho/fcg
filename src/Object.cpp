@@ -16,6 +16,9 @@ Object::Object(string name, const char *file_name, const char *mtl_basepath /*= 
     this->rad.x   = 0.0f;
     this->rad.y   = 0.0f;
     this->rad.z   = 0.0f;
+    this->destroyed = false;
+    this->proj_type = 2;
+
 }
 void Object::setPos(float x, float y, float z){
     this->pos.x = x;

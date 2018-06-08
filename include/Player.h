@@ -1,7 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "Object.h"
-#define SPEED_INCREMENT 0.005f
+#define SPEED_INCREMENT 1.0f
 #define TURN_ANGLE 0.3f
 #define MAX_ANGLE 1.2f
 class Player:public Object
@@ -17,13 +17,13 @@ class Player:public Object
         void move_right();
         void move_foward();
         void move_backwards();
-        void update_player(double time);
+        void update_player(double time, vector<Object*> objs);
         void unturn_left();
         void unturn_right();
         void unturn_up();
         void unturn_down();
 
-
+        void checkCollision(vector<Object*> vect);
 
     protected:
 

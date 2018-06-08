@@ -48,12 +48,15 @@ class Object
         cord pos;   //Position X, Y and Z
         cord rad;   //Angles of rotation X, Y and Z
         ObjModel model; //Vertices etc
+        bool destroyed;
+        cord bbox_min;
+        cord bbox_max;
+        int proj_type; /// 1=sphere, 2=AABB, 3=plane
 
         Object(string name, const char *file_name, const char *mtl_basepath = NULL);
 
         void setPos(float x, float y, float z);
         void setScale(float x, float y, float z);
-
 
         ///TO DO: fcg_util dfunctions that should probably be here
 
