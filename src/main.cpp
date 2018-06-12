@@ -107,9 +107,9 @@ int main(int argc, char* argv[])
     bbox_max_uniform        = shader.getUniformLocation("bbox_max");
 
     shader.activate();
-    shader.passValue("TextureImage0", 0);
-    shader.passValue("TextureImage1", 1);
-    shader.passValue("TextureImage2", 2);
+        shader.passValue("TextureImage0", 0);
+        shader.passValue("TextureImage1", 1);
+        shader.passValue("TextureImage2", 2);
     shader.deactivate();
 
     // Carregamos duas imagens para serem utilizadas como textura
@@ -185,7 +185,6 @@ int main(int argc, char* argv[])
 
         // Pedimos para a GPU utilizar o programa de GPU criado acima (contendo
         // os shaders de vértice e fragmentos).
-        //glUseProgram(program_id);
         shader.activate();
 
         // Computamos a posição da câmera utilizando coordenadas esféricas.  As
@@ -197,7 +196,7 @@ int main(int argc, char* argv[])
         float z = r*cos(g_CameraPhi)*cos(g_CameraTheta);
         float x = r*cos(g_CameraPhi)*sin(g_CameraTheta);
 
-         player.update_player(glfwGetTime(),objects);
+        player.update_player(glfwGetTime(),objects);
 
         // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
         // Veja slides 165-175 do documento "Aula_08_Sistemas_de_Coordenadas.pdf".
