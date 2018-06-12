@@ -1,8 +1,6 @@
 #include <iostream>
+#include <cmath>
 #include "Player.h"
-
-bool turned_x;
-bool turned_z;
 
 Player::Player():Object("cow", "../../data/cow.obj")
 {
@@ -61,6 +59,7 @@ void Player::move_backwards(){
 
 void Player::update_player(double time, vector<Object*> objs){
     double delta_t = time - this->last_update;
+
     checkCollision(objs);
 
     this->pos.x += speed.x*delta_t;
@@ -72,18 +71,22 @@ void Player::update_player(double time, vector<Object*> objs){
 
 void Player::unturn_left(){
     this->rad.y -= TURN_ANGLE;
+    this->speed.x = 0;
     turned_z = false;
 }
 void Player::unturn_right(){
     this->rad.y += TURN_ANGLE;
+    this->speed.x = 0;
     turned_z = false;
 }
 void Player::unturn_up(){
     this->rad.x -= TURN_ANGLE;
+    this->speed.y = 0;
     turned_x = false;
 }
 void Player::unturn_down(){
     this->rad.x += TURN_ANGLE;
+    this->speed.y = 0;
     turned_x = false;
 }
 

@@ -2,6 +2,8 @@
 #define PLAYER_H
 #include "Object.h"
 #define SPEED_INCREMENT 1.0f
+#define MAX_SPEED 1.0f
+#define ACCELERATION 0.2f
 #define TURN_ANGLE 0.3f
 #define MAX_ANGLE 1.2f
 
@@ -29,6 +31,8 @@ class Player:public Object
     protected:
 
     private:
+        bool turned_x;
+        bool turned_z;
 };
 
 #endif // PLAYER_H

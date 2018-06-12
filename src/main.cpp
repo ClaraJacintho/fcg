@@ -13,6 +13,7 @@
 
 
 #include <iostream>
+#include <Shader.h>
 #include "fcg_util.hpp"
 // Headers locais, definidos na pasta "include/"
 
@@ -94,7 +95,10 @@ int main(int argc, char* argv[])
     // para renderização. Veja slide 217 e 219 do documento no Moodle
     // "Aula_03_Rendering_Pipeline_Grafico.pdf".
     //
-    LoadShadersFromFiles();
+    //LoadShadersFromFiles();
+
+    Shader shader("../../src/shader_vertex.glsl","../../src/shader_fragment.glsl");
+    shader.activate();
 
     // Carregamos duas imagens para serem utilizadas como textura
     LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");      // TextureImage0

@@ -25,6 +25,17 @@ elseif(WIN32)
     link_libraries(${glfw})
     link_libraries(gdi32)
     link_libraries(opengl32)
+elseif(UNIX)
+    link_libraries(glfw)
+    link_libraries(pthread)
+    link_libraries(m)
+    link_libraries(dl)
+    link_libraries(rt)
+    link_libraries(X11)
+    link_libraries(Xrandr)
+    link_libraries(Xinerama)
+    link_libraries(Xxf86vm)
+    link_libraries(Xcursor)
 endif ()
 
 add_executable(fcg
@@ -306,8 +317,6 @@ add_executable(fcg
         src/main.cpp
         src/Object.cpp
         src/Player.cpp
-        src/shader_fragment.glsl
-        src/shader_vertex.glsl
         src/stb_image.cpp
         src/textrendering.cpp
-        src/tiny_obj_loader.cpp)
+        src/tiny_obj_loader.cpp include/Shader.h)
