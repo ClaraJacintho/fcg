@@ -98,7 +98,19 @@ int main(int argc, char* argv[])
     //LoadShadersFromFiles();
 
     Shader shader("../../src/shader_vertex.glsl","../../src/shader_fragment.glsl");
+
+    model_uniform           = shader.getUniformLocation("model");
+    view_uniform            = shader.getUniformLocation("view");
+    projection_uniform      = shader.getUniformLocation("projection");
+    object_id_uniform       = shader.getUniformLocation("object_id");
+    bbox_min_uniform        = shader.getUniformLocation("bbox_min");
+    bbox_max_uniform        = shader.getUniformLocation("bbox_max");
+
     shader.activate();
+    shader.passValue("TextureImage0", 0);
+    shader.passValue("TextureImage1", 1);
+    shader.passValue("TextureImage2", 2);
+    shader.deactivate();
 
     // Carregamos duas imagens para serem utilizadas como textura
     LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");      // TextureImage0
@@ -173,7 +185,8 @@ int main(int argc, char* argv[])
 
         // Pedimos para a GPU utilizar o programa de GPU criado acima (contendo
         // os shaders de vértice e fragmentos).
-        glUseProgram(program_id);
+        //glUseProgram(program_id);
+        shader.activate();
 
         // Computamos a posição da câmera utilizando coordenadas esféricas.  As
         // variáveis g_CameraDistance, g_CameraPhi, e g_CameraTheta são
@@ -334,7 +347,22 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
     // Se o usuário apertar a tecla R, recarregamos os shaders dos arquivos "shader_fragment.glsl" e "shader_vertex.glsl".
     if (key == GLFW_KEY_R && action == GLFW_PRESS)
     {
-        LoadShadersFromFiles();
+        //TODO: REFATORAR
+        Shader shader("../../src/shader_vertex.glsl","../../src/shader_fragment.glsl");
+
+        model_uniform           = shader.getUniformLocation("model");
+        view_uniform            = shader.getUniformLocation("view");
+        projection_uniform      = shader.getUniformLocation("projection");
+        object_id_uniform       = shader.getUniformLocation("object_id");
+        bbox_min_uniform        = shader.getUniformLocation("bbox_min");
+        bbox_max_uniform        = shader.getUniformLocation("bbox_max");
+
+        shader.activate();
+        shader.passValue("TextureImage0", 0);
+        shader.passValue("TextureImage1", 1);
+        shader.passValue("TextureImage2", 2);
+        shader.deactivate();
+
         fprintf(stdout,"Shaders recarregados!\n");
         fflush(stdout);
     }
