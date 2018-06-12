@@ -7,7 +7,7 @@
 
 using namespace std;
 
-// Estrutura que representa um modelo geométrico carregado a partir de um
+// Estrutura que representa um modelo geomï¿½trico carregado a partir de um
 // arquivo ".obj". Veja https://en.wikipedia.org/wiki/Wavefront_.obj_file .
 struct ObjModel
 {
@@ -15,7 +15,7 @@ struct ObjModel
     std::vector<tinyobj::shape_t>     shapes;
     std::vector<tinyobj::material_t>  materials;
 
-    // Este construtor lê o modelo de um arquivo utilizando a biblioteca tinyobjloader.
+    // Este construtor lï¿½ o modelo de um arquivo utilizando a biblioteca tinyobjloader.
     // Veja: https://github.com/syoyo/tinyobjloader
     ObjModel(const char* filename, const char* basepath = NULL, bool triangulate = true)
     {
@@ -33,6 +33,7 @@ struct ObjModel
         printf("OK.\n");
     }
 };
+
 struct ls_cord {
     float x,y,z;
 } typedef cord;

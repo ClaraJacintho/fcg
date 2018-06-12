@@ -298,6 +298,7 @@ add_executable(fcg
         include/fcg_util.hpp
         include/matrices.h
         include/Object.h
+        include/Player.h
         include/stb_image.h
         include/tiny_obj_loader.h
         include/utils.h

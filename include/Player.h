@@ -4,6 +4,7 @@
 #define SPEED_INCREMENT 1.0f
 #define TURN_ANGLE 0.3f
 #define MAX_ANGLE 1.2f
+
 class Player:public Object
 {
     public:
