@@ -2,7 +2,7 @@
 #include <cmath>
 #include "Player.h"
 
-Player::Player():Object("SpaceShip", "../../data/SpaceShip.obj")
+Player::Player():Object("jet", "../../data/jet.obj")
 {
     this->speed.x =0;
     this->speed.y =0;
@@ -93,15 +93,18 @@ void Player::checkCollision(vector<Object*> vect){
             bool col_x =false;
             bool col_y =false;
             bool col_z =false;
-            if(this->bbox_max.x + this->pos.x >= a->bbox_min.x + a->pos.x && a->bbox_max.x+a->pos.x >= this->bbox_min.x+this->pos.x) {
+            if(this->bbox_max.x * this->scale.x + this->pos.x >= a->bbox_min.x * a->scale.x + a->pos.x
+               && a->bbox_max.x * a->scale.x + a->pos.x >= this->bbox_min.x * this->scale.x + this->pos.x) {
                 col_x = true;
             }
 
-            if(this->bbox_max.y + this->pos.y >= a->bbox_min.y + a->pos.y && a->bbox_max.y+a->pos.y >= this->bbox_min.y+this->pos.y) {
+            if(this->bbox_max.y * this->scale.y + this->pos.y >= a->bbox_min.y * a->scale.y + a->pos.y
+               && a->bbox_max.y * a->scale.y + a->pos.y >= this->bbox_min.y * this->scale.y + this->pos.y) {
                 col_y = true;
             }
 
-            if(this->bbox_max.z + this->pos.z >= a->bbox_min.z + a->pos.z && a->bbox_max.z+a->pos.z >= this->bbox_min.z+this->pos.z) {
+            if(this->bbox_max.z * this->scale.z + this->pos.z >= a->bbox_min.z * a->scale.z + a->pos.z
+               && a->bbox_max.z * a->scale.z + a->pos.z >= this->bbox_min.z * this->scale.z + this->pos.z) {
                 col_z = true;
             }
 

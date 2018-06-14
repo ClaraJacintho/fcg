@@ -3,14 +3,13 @@
 
 #include <string>
 #include <tiny_obj_loader.h>
-
+#include <glm.hpp>
 
 using namespace std;
 
 // Estrutura que representa um modelo geom�trico carregado a partir de um
 // arquivo ".obj". Veja https://en.wikipedia.org/wiki/Wavefront_.obj_file .
-struct ObjModel
-{
+struct ObjModel {
     tinyobj::attrib_t                 attrib;
     std::vector<tinyobj::shape_t>     shapes;
     std::vector<tinyobj::material_t>  materials;
@@ -34,30 +33,54 @@ struct ObjModel
     }
 };
 
-struct ls_cord {
-    float x,y,z;
-} typedef cord;
-
-
 //std::map<std::string, SceneObject> g_VirtualScene;
 
 class Object
 {
     public:
         string name;
-        cord scale;
-        cord pos;   //Position X, Y and Z
-        cord rad;   //Angles of rotation X, Y and Z
+        glm::vec3 scale;
+        glm::vec3 pos;   //Position X, Y and Z
+        glm::vec3 rad;   //Angles of rotation X, Y and Z
         ObjModel model; //Vertices etc
         bool destroyed;
-        cord bbox_min;
-        cord bbox_max;
+        glm::vec3 bbox_min;
+        glm::vec3 bbox_max;
         int proj_type; /// 1=sphere, 2=AABB, 3=plane
 
-        Object(string name, const char *file_name, const char *mtl_basepath = nullptr);
+        Object(string name, const char *file_name, const char *mtl_basepath = nullptr)
+                : model(file_name, mtl_basepath, true) {
+            ///TO DO: Actually call this functions here instead of in main
+            ///ComputeNormals(&(this->model));
+            ///BuildTrianglesAndAddToVirtualScene(&(this->model));
 
-        void setPos(float x, float y, float z);
-        void setScale(float x, float y, float z);
+            this->name    = name;
+            this->scale   = glm::vec3(1.0f,1.0f,1.0f);
+            this->pos     = glm::vec3(0.0f,0.0f,0.0f);
+            this->rad.x   = 0.0f;
+            this->rad.y   = 0.0f;
+            this->rad.z   = 0.0f;
+            this->destroyed = false;
+            this->proj_type = 2;
+
+        }
+
+        void setPos(glm::vec3 pos_v){
+            this->pos = pos_v;
+        }
+
+        void setScale(glm::vec3 scale_v){
+            this->scale = scale_v;
+        }
+
+        void setRotation(glm::vec3 angles_v){
+            this->rad.x = (float)(angles_v.x * M_PI / 180);
+            this->rad.y = (float)(angles_v.y * M_PI / 180);
+            this->rad.z = (float)(angles_v.z * M_PI / 180);
+        }
+
+//        void setPos(float x, float y, float z);
+//        void setScale(float x, float y, float z);
 
         ///TO DO: fcg_util dfunctions that should probably be here
 

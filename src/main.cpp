@@ -105,27 +105,27 @@ int main(int argc, char* argv[]) {
     objects.clear();
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
+    player.setPos(glm::vec3(0.0f,-1.0f,0.0f));
+    player.setScale(glm::vec3(0.05f,0.05f,0.05f));
+    player.setRotation(glm::vec3(-22.5f,180.0f,0.0f));
     ComputeNormals(&(player.model));
     BuildTrianglesAndAddToVirtualScene(&player);
-    player.setPos(0.0f,-1.0f,0.0f);
-    player.setScale(1.0f,1.0f,1.0f);
-    //player.rad.y = 0.0f;
     objects.push_back(&player);
 
     Object sphere("sphere","../../data/sphere.obj");
+    sphere.setPos(glm::vec3(1.0f,1.0f,-1.0f));
+    sphere.setScale(glm::vec3(1.0f,1.0f,1.0f));
+    sphere.proj_type = 1;
     ComputeNormals(&(sphere.model));
     BuildTrianglesAndAddToVirtualScene(&sphere);
-    sphere.setPos(1.0f,1.0f,-1.0f);
-    sphere.setScale(0.5f,0.5f,0.5f);
-    sphere.proj_type = 1;
     objects.push_back(&sphere);
 
     Object plane("plane","../../data/plane.obj");
+    plane.setPos(glm::vec3(0.0f, -2.0f, 0.0f));
+    plane.setScale(glm::vec3(2.0f,2.0f,2.0f));
+    plane.proj_type = 3;
     ComputeNormals(&(plane.model));
     BuildTrianglesAndAddToVirtualScene(&plane);
-    plane.setPos(0.0f, -2.0f, 0.0f);
-    plane.setScale(2.0f,2.0f,2.0f);
-    plane.proj_type = 3;
     objects.push_back(&plane);
 
     if ( argc > 1 ) {

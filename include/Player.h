@@ -10,7 +10,7 @@
 class Player:public Object
 {
     public:
-        cord speed;
+        glm::vec3 speed;
         double last_update;
         Player();
         virtual ~Player();
