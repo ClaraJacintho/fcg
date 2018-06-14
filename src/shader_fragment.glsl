@@ -68,6 +68,14 @@ void main()
     float U = 0.0;
     float V = 0.0;
 
+    float lambert = max(0,dot(n,l));
+
+    vec3 Kd;
+    vec3 Ks;
+    vec3 Ka;
+
+    vec3 Ia = vec3(0.5f,0.5f,0.5f);
+
     if ( object_id == SPHERE )
     {
         vec4 bbox_center = (bbox_min + bbox_max) / 2.0;
@@ -79,6 +87,14 @@ void main()
 
         U = (thetha+M_PI)/(2*M_PI);
         V = (phi + M_PI_2)/M_PI;
+
+        Kd = texture(TextureImage0, vec2(U,V)).rgb;
+        Ks = vec3(0.5, 0.5, 0.7);
+        Ka = Kd;
+
+        vec3 diffuse = Kd * vec3(10.0, 10.0, 10.0) * lambert + 0.01;
+        vec3 ambient = Ka * Ia;
+        color = diffuse + ambient;
     }
     else if ( object_id == AABB )
     {
@@ -91,22 +107,20 @@ void main()
         float maxz = bbox_max.z;
 
         U = (position_model.x - minx)/(maxx - minx);
-        V = (position_model.y - miny)/(maxy - miny);
+        V = (position_model.z - minz)/(maxz - minz);
+
+        Kd = texture(TextureImage2, vec2(U,V)).rgb * vec3(0.64, 0.64, 0.64);
+        color = Kd * (lambert + 0.01);
     }
     else if ( object_id == PLANE )
     {
         // Coordenadas de textura do plano, obtidas do arquivo OBJ.
         U = texcoords.x;
         V = texcoords.y;
+        Kd = texture(TextureImage0, vec2(U,V)).rgb;
+        color = Kd * (lambert + 0.01);
     }
-
-    // Obtemos a reflet�ncia difusa a partir da leitura da imagem TextureImage0
-    vec3 Kd0 = texture(TextureImage0, vec2(U,V)).rgb;
-
-    // Equa��o de Ilumina��o
-    float lambert = max(0,dot(n,l));
-
-    color = Kd0 * (lambert + 0.01);
+    //color = Kd0 * (lambert + 0.01);
 
     // Cor final com corre��o gamma, considerando monitor sRGB.
     // Veja https://en.wikipedia.org/w/index.php?title=Gamma_correction&oldid=751281772#Windows.2C_Mac.2C_sRGB_and_TV.2Fvideo_standard_gammas

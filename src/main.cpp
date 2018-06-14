@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <Shader.h>
+#include <Skybox.h>
 #include "fcg_util.hpp"
 // Headers locais, definidos na pasta "include/"
 
@@ -100,9 +101,10 @@ int main(int argc, char* argv[]) {
     // Carregamos duas imagens para serem utilizadas como textura
     LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");      // TextureImage0
     LoadTextureImage("../../data/tc-earth_nightmap_citylights.gif"); // TextureImage1
+    LoadTextureImage("../../data/metal.png"); //TextureImage2
+    Skybox skybox("../../data/mp_jasper");  //não funciona ainda
 
     vector<Object*> objects;
-    objects.clear();
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     player.setPos(glm::vec3(0.0f,-1.0f,0.0f));
@@ -112,26 +114,19 @@ int main(int argc, char* argv[]) {
     BuildTrianglesAndAddToVirtualScene(&player);
     objects.push_back(&player);
 
-    Object sphere("sphere","../../data/sphere.obj");
+    Object sphere(1, "sphere","../../data/sphere.obj");
     sphere.setPos(glm::vec3(1.0f,1.0f,-1.0f));
     sphere.setScale(glm::vec3(1.0f,1.0f,1.0f));
-    sphere.proj_type = 1;
     ComputeNormals(&(sphere.model));
     BuildTrianglesAndAddToVirtualScene(&sphere);
     objects.push_back(&sphere);
 
-    Object plane("plane","../../data/plane.obj");
+    Object plane(3, "plane","../../data/plane.obj");
     plane.setPos(glm::vec3(0.0f, -2.0f, 0.0f));
     plane.setScale(glm::vec3(2.0f,2.0f,2.0f));
-    plane.proj_type = 3;
     ComputeNormals(&(plane.model));
     BuildTrianglesAndAddToVirtualScene(&plane);
     objects.push_back(&plane);
-
-    if ( argc > 1 ) {
-        ObjModel model(argv[1]);
-       // BuildTrianglesAndAddToVirtualScene(&model);
-    }
 
     // Inicializamos o código para renderização de texto.
     TextRendering_Init();
@@ -166,7 +161,7 @@ int main(int argc, char* argv[]) {
         // os shaders de vértice e fragmentos).
         shader.activate();
 
-        player.update_player(dt,objects);
+        player.update_player(dt, objects);
 
         // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
         glm::vec4 camera_position_c  = glm::vec4(player.pos.x,player.pos.y+2.0f,player.pos.z+3.0f,1.0f);
@@ -181,7 +176,7 @@ int main(int argc, char* argv[]) {
         float farplane  = -10.0f;
 
         if (g_UsePerspectiveProjection) {
-            float field_of_view = 3.141592 / 3.0f;
+            float field_of_view = M_PI / 3.0f;
             projection = Matrix_Perspective(field_of_view, g_ScreenRatio, nearplane, farplane);
         } else {
             float t = 1.5f*g_CameraDistance/2.5f;
@@ -204,10 +199,24 @@ int main(int argc, char* argv[]) {
                     * Matrix_Rotate_Y(objects[i]->rad.y)
                     * Matrix_Rotate_Z(objects[i]->rad.z);
                 shader.passValue("model", model);
-                shader.passValue("object_id", objects[i]->proj_type);
+                shader.passValue("object_id", objects[i]->obj_type);
                 DrawVirtualObject(objects[i]->name.c_str());
             }
         }
+
+        shader.deactivate();
+
+        /*glDepthFunc(GL_LEQUAL);
+        skybox.shader.activate();
+        skybox.shader.passValue("view", glm::mat4(glm::mat3(view)));
+        skybox.shader.passValue("projection", projection);
+        glBindVertexArray(skybox.VAO);
+        glActiveTexture(GL_TEXTURE0 + 128);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.texture_map);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        //glBindVertexArray(0);
+        glDepthFunc(GL_LESS);
+        skybox.shader.deactivate();*/
 
         TextRendering_ShowEulerAngles(window);
         TextRendering_ShowProjection(window);

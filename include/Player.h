@@ -26,8 +26,6 @@ class Player:public Object
         void unturn_up();
         void unturn_down();
 
-        void checkCollision(vector<Object*> vect);
-
     protected:
 
     private:

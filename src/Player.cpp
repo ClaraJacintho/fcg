@@ -58,7 +58,7 @@ void Player::move_backwards(){
 }
 
 void Player::update_player(double dt, vector<Object*> objs){
-    checkCollision(objs);
+    checkCollisionAABB(objs);
 
     this->pos.x += speed.x*dt;
     this->pos.y += speed.y*dt;
@@ -86,34 +86,4 @@ void Player::unturn_down(){
     turned_x = false;
 }
 
-
-void Player::checkCollision(vector<Object*> vect){
-    for(auto const a : vect){
-       if(a->name != this->name){
-            bool col_x =false;
-            bool col_y =false;
-            bool col_z =false;
-            if(this->bbox_max.x * this->scale.x + this->pos.x >= a->bbox_min.x * a->scale.x + a->pos.x
-               && a->bbox_max.x * a->scale.x + a->pos.x >= this->bbox_min.x * this->scale.x + this->pos.x) {
-                col_x = true;
-            }
-
-            if(this->bbox_max.y * this->scale.y + this->pos.y >= a->bbox_min.y * a->scale.y + a->pos.y
-               && a->bbox_max.y * a->scale.y + a->pos.y >= this->bbox_min.y * this->scale.y + this->pos.y) {
-                col_y = true;
-            }
-
-            if(this->bbox_max.z * this->scale.z + this->pos.z >= a->bbox_min.z * a->scale.z + a->pos.z
-               && a->bbox_max.z * a->scale.z + a->pos.z >= this->bbox_min.z * this->scale.z + this->pos.z) {
-                col_z = true;
-            }
-
-            if(col_x && col_y && col_z){
-                a->destroyed = true;
-                printf("Destroyed %s\n", a->name.c_str());
-            }
-       }
-
-    }
-}
 

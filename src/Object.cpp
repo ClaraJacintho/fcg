@@ -18,7 +18,7 @@
 //    this->rad.y   = 0.0f;
 //    this->rad.z   = 0.0f;
 //    this->destroyed = false;
-//    this->proj_type = 2;
+//    this->obj_type = 2;
 //
 //}
 //void Object::setPos(glm::vec3 pos_v){
