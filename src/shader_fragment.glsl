@@ -2,38 +2,38 @@
 
 // Atributos de fragmentos recebidos como entrada ("in") pelo Fragment Shader.
 // Neste exemplo, este atributo foi gerado pelo rasterizador como a
-// interpolação da cor de cada vértice, definidas em "shader_vertex.glsl" e
+// interpolaï¿½ï¿½o da cor de cada vï¿½rtice, definidas em "shader_vertex.glsl" e
 // "main.cpp".
 in vec4 position_world;
 in vec4 normal;
 
-// Posição do vértice atual no sistema de coordenadas local do modelo.
+// Posiï¿½ï¿½o do vï¿½rtice atual no sistema de coordenadas local do modelo.
 in vec4 position_model;
 
 // Coordenadas de textura obtidas do arquivo OBJ (se existirem!)
 in vec2 texcoords;
 
-// Matrizes computadas no código C++ e enviadas para a GPU
+// Matrizes computadas no cï¿½digo C++ e enviadas para a GPU
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-// Identificador que define qual objeto está sendo desenhado no momento
+// Identificador que define qual objeto estï¿½ sendo desenhado no momento
 #define SPHERE 1
 #define AABB 2
 #define PLANE  3
 uniform int object_id;
 
-// Parâmetros da axis-aligned bounding box (AABB) do modelo
+// Parï¿½metros da axis-aligned bounding box (AABB) do modelo
 uniform vec4 bbox_min;
 uniform vec4 bbox_max;
 
-// Variáveis para acesso das imagens de textura
+// Variï¿½veis para acesso das imagens de textura
 uniform sampler2D TextureImage0;
 uniform sampler2D TextureImage1;
 uniform sampler2D TextureImage2;
 
-// O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
+// O valor de saï¿½da ("out") de um Fragment Shader ï¿½ a cor final do fragmento.
 out vec3 color;
 
 // Constantes
@@ -42,26 +42,26 @@ out vec3 color;
 
 void main()
 {
-    // Obtemos a posição da câmera utilizando a inversa da matriz que define o
-    // sistema de coordenadas da câmera.
+    // Obtemos a posiï¿½ï¿½o da cï¿½mera utilizando a inversa da matriz que define o
+    // sistema de coordenadas da cï¿½mera.
     vec4 origin = vec4(0.0, 0.0, 0.0, 1.0);
     vec4 camera_position = inverse(view) * origin;
 
-    // O fragmento atual é coberto por um ponto que percente à superfície de um
-    // dos objetos virtuais da cena. Este ponto, p, possui uma posição no
-    // sistema de coordenadas global (World coordinates). Esta posição é obtida
-    // através da interpolação, feita pelo rasterizador, da posição de cada
-    // vértice.
+    // O fragmento atual ï¿½ coberto por um ponto que percente ï¿½ superfï¿½cie de um
+    // dos objetos virtuais da cena. Este ponto, p, possui uma posiï¿½ï¿½o no
+    // sistema de coordenadas global (World coordinates). Esta posiï¿½ï¿½o ï¿½ obtida
+    // atravï¿½s da interpolaï¿½ï¿½o, feita pelo rasterizador, da posiï¿½ï¿½o de cada
+    // vï¿½rtice.
     vec4 p = position_world;
 
     // Normal do fragmento atual, interpolada pelo rasterizador a partir das
-    // normais de cada vértice.
+    // normais de cada vï¿½rtice.
     vec4 n = normalize(normal);
 
-    // Vetor que define o sentido da fonte de luz em relação ao ponto atual.
+    // Vetor que define o sentido da fonte de luz em relaï¿½ï¿½o ao ponto atual.
     vec4 l = normalize(vec4(1.0,1.0,0.0,0.0));
 
-    // Vetor que define o sentido da câmera em relação ao ponto atual.
+    // Vetor que define o sentido da cï¿½mera em relaï¿½ï¿½o ao ponto atual.
     vec4 v = normalize(camera_position - p);
 
     // Coordenadas de textura U e V
@@ -77,8 +77,6 @@ void main()
         float thetha = atan(position_model.x, position_model.z);
         float phi = asin(position_model.y/ro_value);
 
-
-
         U = (thetha+M_PI)/(2*M_PI);
         V = (phi + M_PI_2)/M_PI;
     }
@@ -87,13 +85,10 @@ void main()
         float minx = bbox_min.x;
         float maxx = bbox_max.x;
 
-
         float miny = bbox_min.y;
         float maxy = bbox_max.y;
-
         float minz = bbox_min.z;
         float maxz = bbox_max.z;
-
 
         U = (position_model.x - minx)/(maxx - minx);
         V = (position_model.y - miny)/(maxy - miny);
@@ -105,15 +100,15 @@ void main()
         V = texcoords.y;
     }
 
-    // Obtemos a refletância difusa a partir da leitura da imagem TextureImage0
+    // Obtemos a refletï¿½ncia difusa a partir da leitura da imagem TextureImage0
     vec3 Kd0 = texture(TextureImage0, vec2(U,V)).rgb;
 
-    // Equação de Iluminação
+    // Equaï¿½ï¿½o de Iluminaï¿½ï¿½o
     float lambert = max(0,dot(n,l));
 
     color = Kd0 * (lambert + 0.01);
 
-    // Cor final com correção gamma, considerando monitor sRGB.
+    // Cor final com correï¿½ï¿½o gamma, considerando monitor sRGB.
     // Veja https://en.wikipedia.org/w/index.php?title=Gamma_correction&oldid=751281772#Windows.2C_Mac.2C_sRGB_and_TV.2Fvideo_standard_gammas
     color = pow(color, vec3(1.0,1.0,1.0)/2.2);
 }

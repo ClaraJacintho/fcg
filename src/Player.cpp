@@ -2,7 +2,7 @@
 #include <cmath>
 #include "Player.h"
 
-Player::Player():Object("cow", "../../data/cow.obj")
+Player::Player():Object("SpaceShip", "../../data/SpaceShip.obj")
 {
     this->speed.x =0;
     this->speed.y =0;
@@ -57,16 +57,12 @@ void Player::move_backwards(){
     this->speed.z -= SPEED_INCREMENT;
 }
 
-void Player::update_player(double time, vector<Object*> objs){
-    double delta_t = time - this->last_update;
-
+void Player::update_player(double dt, vector<Object*> objs){
     checkCollision(objs);
 
-    this->pos.x += speed.x*delta_t;
-    this->pos.y += speed.y*delta_t;
-    this->pos.z += speed.z*delta_t;
-
-    this->last_update = time;
+    this->pos.x += speed.x*dt;
+    this->pos.y += speed.y*dt;
+    this->pos.z += speed.z*dt;
 }
 
 void Player::unturn_left(){

@@ -21,16 +21,16 @@
 #include "Object.h"
 #include "utils.h"
 #include "Player.h"
+#include "Shader.h"
+
 
 Player player;
+double dt = 0.0f;
+double lastFrame = 0.0f;
 
-int main(int argc, char* argv[])
-{
-    // Inicializamos a biblioteca GLFW, utilizada para criar uma janela do
-    // sistema operacional, onde poderemos renderizar com OpenGL.
+int main(int argc, char* argv[]) {
     int success = glfwInit();
-    if (!success)
-    {
+    if (!success) {
         fprintf(stderr, "ERROR: glfwInit() failed.\n");
         std::exit(EXIT_FAILURE);
     }
@@ -38,17 +38,12 @@ int main(int argc, char* argv[])
     // Definimos o callback para impressão de erros da GLFW no terminal
     glfwSetErrorCallback(ErrorCallback);
 
-    // Pedimos para utilizar OpenGL versão 3.3 (ou superior)
+    // Configuramos o OpenGL 3.3
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-
-    // Pedimos para utilizar o perfil "core", isto é, utilizaremos somente as
-    // funções modernas de OpenGL.
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE); //compatibilidade com macOS
 
-    // Criamos uma janela do sistema operacional, com 800 colunas e 600 linhas
-    // de pixels, e com título "INF01047 ...".
     GLFWwindow* window;
     window = glfwCreateWindow(800, 600, "INF01047 - PROJETO FINAL", NULL, NULL);
     if (!window)
@@ -58,16 +53,10 @@ int main(int argc, char* argv[])
         std::exit(EXIT_FAILURE);
     }
 
-
-
-    // Definimos a função de callback que será chamada sempre que o usuário
-    // pressionar alguma tecla do teclado ...
+    // Definimos as funções de callback de input
     glfwSetKeyCallback(window, KeyCallback);
-    // ... ou clicar os botões do mouse ...
     glfwSetMouseButtonCallback(window, MouseButtonCallback);
-    // ... ou movimentar o cursor do mouse em cima da janela ...
     glfwSetCursorPosCallback(window, CursorPosCallback);
-    // ... ou rolar a "rodinha" do mouse.
     glfwSetScrollCallback(window, ScrollCallback);
 
     // Indicamos que as chamadas OpenGL deverão renderizar nesta janela
@@ -92,19 +81,15 @@ int main(int argc, char* argv[])
     printf("GPU: %s, %s, OpenGL %s, GLSL %s\n", vendor, renderer, glversion, glslversion);
 
     // Carregamos os shaders de vértices e de fragmentos que serão utilizados
-    // para renderização. Veja slide 217 e 219 do documento no Moodle
-    // "Aula_03_Rendering_Pipeline_Grafico.pdf".
-    //
-    //LoadShadersFromFiles();
-
+    // para renderização.
     Shader shader("../../src/shader_vertex.glsl","../../src/shader_fragment.glsl");
 
-    model_uniform           = shader.getUniformLocation("model");
-    view_uniform            = shader.getUniformLocation("view");
-    projection_uniform      = shader.getUniformLocation("projection");
-    object_id_uniform       = shader.getUniformLocation("object_id");
-    bbox_min_uniform        = shader.getUniformLocation("bbox_min");
-    bbox_max_uniform        = shader.getUniformLocation("bbox_max");
+    model_uniform      = shader.getUniformLocation("model");
+    view_uniform       = shader.getUniformLocation("view");
+    projection_uniform = shader.getUniformLocation("projection");
+    object_id_uniform  = shader.getUniformLocation("object_id");
+    bbox_min_uniform   = shader.getUniformLocation("bbox_min");
+    bbox_max_uniform   = shader.getUniformLocation("bbox_max");
 
     shader.activate();
         shader.passValue("TextureImage0", 0);
@@ -117,12 +102,14 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/tc-earth_nightmap_citylights.gif"); // TextureImage1
 
     vector<Object*> objects;
-    // Construímos a representação de objetos geométricos através de malhas de triângulos
+    objects.clear();
 
+    // Construímos a representação de objetos geométricos através de malhas de triângulos
     ComputeNormals(&(player.model));
     BuildTrianglesAndAddToVirtualScene(&player);
     player.setPos(0.0f,-1.0f,0.0f);
-    player.rad.y = 1.5708f;
+    player.setScale(1.0f,1.0f,1.0f);
+    //player.rad.y = 0.0f;
     objects.push_back(&player);
 
     Object sphere("sphere","../../data/sphere.obj");
@@ -141,8 +128,7 @@ int main(int argc, char* argv[])
     plane.proj_type = 3;
     objects.push_back(&plane);
 
-    if ( argc > 1 )
-    {
+    if ( argc > 1 ) {
         ObjModel model(argv[1]);
        // BuildTrianglesAndAddToVirtualScene(&model);
     }
@@ -167,73 +153,37 @@ int main(int argc, char* argv[])
     int number_of_objects = g_VirtualScene.size();
 
     // Ficamos em loop, renderizando, até que o usuário feche a janela
-    while (!glfwWindowShouldClose(window))
-    {
-        // Aqui executamos as operações de renderização
+    while (!glfwWindowShouldClose(window)) {
+        double curTime = glfwGetTime();
+        dt = curTime - lastFrame;
+        lastFrame = curTime;
 
-        // Definimos a cor do "fundo" do framebuffer como branco.  Tal cor é
-        // definida como coeficientes RGBA: Red, Green, Blue, Alpha; isto é:
-        // Vermelho, Verde, Azul, Alpha (valor de transparência).
-        // Conversaremos sobre sistemas de cores nas aulas de Modelos de Iluminação.
-        //
-        //           R     G     B     A
+        // Definimos a cor do "fundo" do framebuffer como branco.
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-        // "Pintamos" todos os pixels do framebuffer com a cor definida acima,
-        // e também resetamos todos os pixels do Z-buffer (depth buffer).
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Pedimos para a GPU utilizar o programa de GPU criado acima (contendo
         // os shaders de vértice e fragmentos).
         shader.activate();
 
-        // Computamos a posição da câmera utilizando coordenadas esféricas.  As
-        // variáveis g_CameraDistance, g_CameraPhi, e g_CameraTheta são
-        // controladas pelo mouse do usuário. Veja as funções CursorPosCallback()
-        // e ScrollCallback().
-        float r = g_CameraDistance;
-        float y = r*sin(g_CameraPhi);
-        float z = r*cos(g_CameraPhi)*cos(g_CameraTheta);
-        float x = r*cos(g_CameraPhi)*sin(g_CameraTheta);
-
-        player.update_player(glfwGetTime(),objects);
+        player.update_player(dt,objects);
 
         // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
-        // Veja slides 165-175 do documento "Aula_08_Sistemas_de_Coordenadas.pdf".
-        glm::vec4 camera_position_c  = glm::vec4(player.pos.x,player.pos.y+2.0f,player.pos.z+3.0f,1.0f); // Ponto "c", centro da câmera
-        glm::vec4 camera_lookat_l    = glm::vec4(player.pos.x,player.pos.y,player.pos.z,1.0f); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
-        glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c; // Vetor "view", sentido para onde a câmera está virada
-        glm::vec4 camera_up_vector   = glm::vec4(0.0f,1.0f,0.0f,0.0f); // Vetor "up" fixado para apontar para o "céu" (eito Y global)
+        glm::vec4 camera_position_c  = glm::vec4(player.pos.x,player.pos.y+2.0f,player.pos.z+3.0f,1.0f);
+        glm::vec4 camera_lookat_l    = glm::vec4(player.pos.x,player.pos.y,player.pos.z,1.0f);
+        glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c;
+        glm::vec4 camera_up_vector   = glm::vec4(0.0f,1.0f,0.0f,0.0f);
 
-        // Computamos a matriz "View" utilizando os parâmetros da câmera para
-        // definir o sistema de coordenadas da câmera.  Veja slide 179 do
-        // documento "Aula_08_Sistemas_de_Coordenadas.pdf".
         glm::mat4 view = Matrix_Camera_View(camera_position_c, camera_view_vector, camera_up_vector);
-
-        // Agora computamos a matriz de Projeção.
         glm::mat4 projection;
 
-        // Note que, no sistema de coordenadas da câmera, os planos near e far
-        // estão no sentido negativo! Veja slides 191-194 do documento
-        // "Aula_09_Projecoes.pdf".
-        float nearplane = -0.1f;  // Posição do "near plane"
-        float farplane  = -10.0f; // Posição do "far plane"
+        float nearplane = -0.1f;
+        float farplane  = -10.0f;
 
-        if (g_UsePerspectiveProjection)
-        {
-            // Projeção Perspectiva.
-            // Para definição do field of view (FOV), veja slide 228 do
-            // documento "Aula_09_Projecoes.pdf".
+        if (g_UsePerspectiveProjection) {
             float field_of_view = 3.141592 / 3.0f;
             projection = Matrix_Perspective(field_of_view, g_ScreenRatio, nearplane, farplane);
-        }
-        else
-        {
-            // Projeção Ortográfica.
-            // Para definição dos valores l, r, b, t ("left", "right", "bottom", "top"),
-            // veja slide 243 do documento "Aula_09_Projecoes.pdf".
-            // Para simular um "zoom" ortográfico, computamos o valor de "t"
-            // utilizando a variável g_CameraDistance.
+        } else {
             float t = 1.5f*g_CameraDistance/2.5f;
             float b = -t;
             float r = t*g_ScreenRatio;
@@ -243,14 +193,8 @@ int main(int argc, char* argv[])
 
         glm::mat4 model = Matrix_Identity(); // Transformação identidade de modelagem
 
-        // Enviamos as matrizes "view" e "projection" para a placa de vídeo
-        // (GPU). Veja o arquivo "shader_vertex.glsl", onde estas são
-        // efetivamente aplicadas em todos os pontos.
-        glUniformMatrix4fv(view_uniform       , 1 , GL_FALSE , glm::value_ptr(view));
-        glUniformMatrix4fv(projection_uniform , 1 , GL_FALSE , glm::value_ptr(projection));
-
-
-
+        shader.passValue("view", view);
+        shader.passValue("projection", projection);
 
         for(int i = 0; i < number_of_objects; i++){
             if(objects[i]->destroyed == false){
@@ -259,59 +203,21 @@ int main(int argc, char* argv[])
                     * Matrix_Rotate_X(objects[i]->rad.x)
                     * Matrix_Rotate_Y(objects[i]->rad.y)
                     * Matrix_Rotate_Z(objects[i]->rad.z);
-                glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-                glUniform1i(object_id_uniform, objects[i]->proj_type);
+                shader.passValue("model", model);
+                shader.passValue("object_id", objects[i]->proj_type);
                 DrawVirtualObject(objects[i]->name.c_str());
             }
         }
 
-
-
-
-
-        // Desenhamos o plano do chão
-   //     model = Matrix_Translate(0.0f,-1.1f,0.0f);
-   //     glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-   //     glUniform1i(object_id_uniform, PLANE);
-  //      DrawVirtualObject("plane");
-
-        // Pegamos um vértice com coordenadas de modelo (0.5, 0.5, 0.5, 1) e o
-        // passamos por todos os sistemas de coordenadas armazenados nas
-        // matrizes the_model, the_view, e the_projection; e escrevemos na tela
-        // as matrizes e pontos resultantes dessas transformações.
-        //glm::vec4 p_model(0.5f, 0.5f, 0.5f, 1.0f);
-        //TextRendering_ShowModelViewProjection(window, projection, view, model, p_model);
-
-        // Imprimimos na tela os ângulos de Euler que controlam a rotação do
-        // terceiro cubo.
         TextRendering_ShowEulerAngles(window);
-
-        // Imprimimos na informação sobre a matriz de projeção sendo utilizada.
         TextRendering_ShowProjection(window);
-
-        // Imprimimos na tela informação sobre o número de quadros renderizados
-        // por segundo (frames per second).
         TextRendering_ShowFramesPerSecond(window);
 
-        // O framebuffer onde OpenGL executa as operações de renderização não
-        // é o mesmo que está sendo mostrado para o usuário, caso contrário
-        // seria possível ver artefatos conhecidos como "screen tearing". A
-        // chamada abaixo faz a troca dos buffers, mostrando para o usuário
-        // tudo que foi renderizado pelas funções acima.
-        // Veja o link: Veja o link: https://en.wikipedia.org/w/index.php?title=Multiple_buffering&oldid=793452829#Double_buffering_in_computer_graphics
         glfwSwapBuffers(window);
-
-        // Verificamos com o sistema operacional se houve alguma interação do
-        // usuário (teclado, mouse, ...). Caso positivo, as funções de callback
-        // definidas anteriormente usando glfwSet*Callback() serão chamadas
-        // pela biblioteca GLFW.
         glfwPollEvents();
     }
 
-    // Finalizamos o uso dos recursos do sistema operacional
     glfwTerminate();
-
-    // Fim do programa
     return 0;
 }
 

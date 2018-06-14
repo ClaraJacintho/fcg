@@ -54,7 +54,7 @@ class Object
         cord bbox_max;
         int proj_type; /// 1=sphere, 2=AABB, 3=plane
 
-        Object(string name, const char *file_name, const char *mtl_basepath = NULL);
+        Object(string name, const char *file_name, const char *mtl_basepath = nullptr);
 
         void setPos(float x, float y, float z);
         void setScale(float x, float y, float z);

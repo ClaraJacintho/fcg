@@ -20,7 +20,7 @@ class Player:public Object
         void move_right();
         void move_foward();
         void move_backwards();
-        void update_player(double time, vector<Object*> objs);
+        void update_player(double dt, vector<Object*> objs);
         void unturn_left();
         void unturn_right();
         void unturn_up();

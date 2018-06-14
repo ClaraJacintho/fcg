@@ -1,6 +1,6 @@
 #include "Object.h"
 
-Object::Object(string name, const char *file_name, const char *mtl_basepath /*= NULL*/) : model(file_name, mtl_basepath, true)
+Object::Object(string name, const char *file_name, const char *mtl_basepath) : model(file_name, mtl_basepath, true)
 {
     ///TO DO: Actually call this functions here instead of in main
     ///ComputeNormals(&(this->model));
