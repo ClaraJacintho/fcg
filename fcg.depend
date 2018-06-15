@@ -1118,14 +1118,19 @@
 	<inttypes.h>
 	<stdint.h>
 
-1528482102 source:c:\users\maria\desktop\fcg\src\main.cpp
+1529050079 source:c:\users\maria\desktop\fcg\src\main.cpp
 	<iostream>
+	<Shader.h>
+	<Skybox.h>
+	<Tunnel.h>
 	"fcg_util.hpp"
 	"Object.h"
 	"utils.h"
 	"Player.h"
+	"Shader.h"
+	"Sphere.h"
 
-1528431500 c:\users\maria\desktop\fcg\include\fcg_util.hpp
+1529040415 c:\users\maria\desktop\fcg\include\fcg_util.hpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -1196,7 +1201,7 @@
 	<cstddef>
 	"../simd/platform.h"
 
-1528243436 c:\users\maria\desktop\fcg\include\glm\simd\platform.h
+1529038253 c:\users\maria\desktop\fcg\include\glm\simd\platform.h
 	<cuda.h>
 	<intrin.h>
 	<immintrin.h>
@@ -1614,9 +1619,12 @@
 1528243426 c:\users\maria\desktop\fcg\include\glm\matrix.hpp
 	"detail/func_matrix.hpp"
 
-1528481759 c:\users\maria\desktop\fcg\include\object.h
+1529057238 c:\users\maria\desktop\fcg\include\object.h
+	<iostream>
 	<string>
 	<tiny_obj_loader.h>
+	<glm/vec3.hpp>
+	<math.h>
 
 1528243425 c:\users\maria\desktop\fcg\include\tiny_obj_loader.h
 	<map>
@@ -1632,10 +1640,14 @@
 	<fstream>
 	<sstream>
 
-1528467325 c:\users\maria\desktop\fcg\include\player.h
+1529057413 c:\users\maria\desktop\fcg\include\player.h
 	"Object.h"
+	"Sphere.h"
+	<glm/common.hpp>
+	<glm/geometric.hpp>
 
-1528481767 source:c:\users\maria\desktop\fcg\src\object.cpp
+1529038253 source:c:\users\maria\desktop\fcg\src\object.cpp
+	<glm/vec3.hpp>
 	"Object.h"
 
 1528243439 source:c:\users\maria\desktop\fcg\src\stb_image.cpp
@@ -1657,8 +1669,9 @@
 1528243439 source:c:\users\maria\desktop\fcg\src\tiny_obj_loader.cpp
 	"tiny_obj_loader.h"
 
-1528472415 source:c:\users\maria\desktop\fcg\src\player.cpp
+1529047892 source:c:\users\maria\desktop\fcg\src\player.cpp
 	<iostream>
+	<cmath>
 	"Player.h"
 
 1528750983 source:c:\users\user\desktop\ufrgs\fcg\fcg\src\glad.c
@@ -2098,4 +2111,31 @@
 	<utility>
 	<fstream>
 	<sstream>
+
+1529038253 c:\users\maria\desktop\fcg\include\shader.h
+	<glad/glad.h>
+	"fcg_util.hpp"
+
+1529038253 c:\users\maria\desktop\fcg\include\skybox.h
+	<string>
+	<vector>
+	<glad/glad.h>
+	<iostream>
+	"stb_image.h"
+	"Object.h"
+	"Shader.h"
+	<fcg_util.hpp>
+
+1529040415 c:\users\maria\desktop\fcg\include\tunnel.h
+	<glad/glad.h>
+	"fcg_util.hpp"
+	"Shader.h"
+
+1529050260 c:\users\maria\desktop\fcg\include\sphere.h
+	"Object.h"
+
+1529050260 source:c:\users\maria\desktop\fcg\src\sphere.cpp
+
+1528243425 c:\users\maria\desktop\fcg\include\glm\common.hpp
+	"detail/func_common.hpp"
 

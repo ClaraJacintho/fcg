@@ -60,12 +60,7 @@ void Player::move_backwards(){
 }
 
 void Player::update_player(double dt, vector<Object*> objs){
-//    if(checkCollision(objs)){
-//        this->acceleration.x -= 10.0f * this->acceleration.x;
-//        this->acceleration.y -= 10.0f * this->acceleration.y;
-//        this->acceleration.z -= 10.0f * this->acceleration.z;
-//    }
-
+    this->checkCollision(objs);
     this->speed.x += this->acceleration.x * dt;
     this->speed.y += this->acceleration.y * dt;
     this->speed.z += this->acceleration.z * dt;

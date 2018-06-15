@@ -67,6 +67,7 @@
 		<Unit filename="include/KHR/khrplatform.h" />
 		<Unit filename="include/Object.h" />
 		<Unit filename="include/Player.h" />
+		<Unit filename="include/Sphere.h" />
 		<Unit filename="include/dejavufont.h" />
 		<Unit filename="include/fcg_util.hpp">
 			<Option target="Debug" />
@@ -341,6 +342,7 @@
 		<Unit filename="include/utils.h" />
 		<Unit filename="src/Object.cpp" />
 		<Unit filename="src/Player.cpp" />
+		<Unit filename="src/Sphere.cpp" />
 		<Unit filename="src/glad.c">
 			<Option compilerVar="CC" />
 		</Unit>

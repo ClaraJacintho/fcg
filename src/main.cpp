@@ -24,6 +24,7 @@
 #include "utils.h"
 #include "Player.h"
 #include "Shader.h"
+#include "Sphere.h"
 
 
 Player player;
@@ -115,10 +116,13 @@ int main(int argc, char* argv[]) {
     ComputeNormals(&(player.model));
     BuildTrianglesAndAddToVirtualScene(&player);
     objects.push_back(&player);
+    std::cout << player.bbox_max.x << std::endl;
+    std::cout << player.bbox_max.y << std::endl;
+    std::cout << player.bbox_max.z << std::endl;
 
-    Object sphere(1, "sphere","../../data/sphere.obj");
+    Sphere sphere("sphere","../../data/sphere.obj");
     sphere.setPos(glm::vec3(1.0f,1.0f,-1.0f));
-    sphere.setScale(glm::vec3(1.0f,1.0f,1.0f));
+    sphere.setScale(1);
     ComputeNormals(&(sphere.model));
     BuildTrianglesAndAddToVirtualScene(&sphere);
     objects.push_back(&sphere);
@@ -311,43 +315,33 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         fflush(stdout);
     }
     if (key == GLFW_KEY_D  && action == GLFW_PRESS){
-//        player.move_right();
        player.move(glm::vec3(1.0f,0.0f,0.0f));
     }
     if (key == GLFW_KEY_A && action == GLFW_PRESS){
-//        player.move_left();
         player.move(glm::vec3(-1.0f,0.0f,0.0f));
     }
     if (key == GLFW_KEY_W  && action == GLFW_PRESS){
-//        player.move_up();
         player.move(glm::vec3(0.0f,1.0f,0.0f));
     }
     if (key == GLFW_KEY_S && action == GLFW_PRESS){
-//        player.move_down();
         player.move(glm::vec3(0.0f,-1.0f,0.0f));
     }
     if (key == GLFW_KEY_Q  && action == GLFW_PRESS){
-//        player.move_foward();
         player.move(glm::vec3(0.0f,0.0f,1.0f));
     }
     if (key == GLFW_KEY_E && action == GLFW_PRESS){
-//        player.move_backwards();
         player.move(glm::vec3(0.0f,0.0f,-1.0f));
     }
     if (key == GLFW_KEY_D  && action == GLFW_RELEASE){
-//        player.unturn_right();
         player.move(glm::vec3(0.0f,0.0f,0.0f));
     }
     if (key == GLFW_KEY_A && action == GLFW_RELEASE){
-//        player.unturn_left();
         player.move(glm::vec3(0.0f,0.0f,0.0f));
     }
     if (key == GLFW_KEY_W  && action == GLFW_RELEASE){
-//        player.unturn_up();
         player.move(glm::vec3(0.0f,0.0f,0.0f));
     }
     if (key == GLFW_KEY_S && action == GLFW_RELEASE){
-//        player.unturn_down();
         player.move(glm::vec3(0.0f,0.0f,0.0f));
     }
 
