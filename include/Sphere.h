@@ -7,7 +7,7 @@ class Sphere:public Object
     public:
         float radius;
         Sphere(string name, const char *file_name):Object(1, name,file_name){
-            radius = 1;
+            radius = 0.5;
         }
 
         ~Sphere()
