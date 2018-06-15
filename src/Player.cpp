@@ -2,11 +2,13 @@
 #include <cmath>
 #include "Player.h"
 
-Player::Player():Object("jet", "../../data/jet.obj")
+Player::Player() : Object("jet", "../../data/jet.obj")
 {
-    this->speed.x =0;
-    this->speed.y =0;
-    this->speed.z =0;
+    this->speed.x = 0;
+    this->speed.y = 0;
+    this->speed.z = 0;
+
+    this->acceleration = glm::vec3(0.0f,0.0f,0.0f);
 }
 
 Player::~Player()
@@ -58,11 +60,23 @@ void Player::move_backwards(){
 }
 
 void Player::update_player(double dt, vector<Object*> objs){
-    checkCollisionAABB(objs);
+//    if(checkCollision(objs)){
+//        this->acceleration.x -= 10.0f * this->acceleration.x;
+//        this->acceleration.y -= 10.0f * this->acceleration.y;
+//        this->acceleration.z -= 10.0f * this->acceleration.z;
+//    }
 
-    this->pos.x += speed.x*dt;
-    this->pos.y += speed.y*dt;
-    this->pos.z += speed.z*dt;
+    this->speed.x += this->acceleration.x * dt;
+    this->speed.y += this->acceleration.y * dt;
+    this->speed.z += this->acceleration.z * dt;
+
+    this->speed.x = (speed.x >= MAX_SPEED ? MAX_SPEED : speed.x);
+    this->speed.y = (speed.y >= MAX_SPEED ? MAX_SPEED : speed.y);
+    this->speed.z = (speed.z >= MAX_SPEED ? MAX_SPEED : speed.z);
+
+    this->pos.x += speed.x * dt;
+    this->pos.y += speed.y * dt;
+    this->pos.z += speed.z * dt;
 }
 
 void Player::unturn_left(){
@@ -84,6 +98,10 @@ void Player::unturn_down(){
     this->rad.x += TURN_ANGLE;
     this->speed.y = 0;
     turned_x = false;
+}
+
+void Player::move(glm::vec3 direction) {
+    this->acceleration = direction;
 }
 
 
