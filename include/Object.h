@@ -5,6 +5,9 @@
 #include <tiny_obj_loader.h>
 #include <glm.hpp>
 
+#define SPHERE 1
+#define AABB 2
+#define PLANE 3
 using namespace std;
 
 // Estrutura que representa um modelo geom�trico carregado a partir de um
@@ -46,7 +49,7 @@ class Object
         bool destroyed;
         glm::vec3 bbox_min;
         glm::vec3 bbox_max;
-        int obj_type; /// 1=sphere, 2=AABB, 3=plane
+        int obj_type;
 
         Object(int obj_type, string name, const char *file_name, const char *mtl_basepath = nullptr)
                 : model(file_name, mtl_basepath, true) {
@@ -73,7 +76,7 @@ class Object
             this->pos       = glm::vec3(0.0f,0.0f,0.0f);
             this->rad       = glm::vec3(0.0f,0.0f,0.0f);
             this->destroyed = false;
-            this->obj_type  = 2;
+            this->obj_type  = AABB;
         }
 
         void setPos(glm::vec3 pos_v){
@@ -90,31 +93,93 @@ class Object
             this->rad.z = (float)(angles_v.z * M_PI / 180);
         }
 
+        glm::vec3 rotateBBox(glm::vec3 bbox, glm::vec3 rotation){
+            glm::vec3 bbox_final;
+            
+            //rotaciona ponto em Z
+            bbox_final.x = bbox.x * cos(rotation.z) - bbox.y * sin(rotation.z);
+            bbox_final.y = bbox.x * sin(rotation.z) + bbox.y * cos(rotation.z);
+
+            //rotaciona ponto em Y
+            bbox_final.x = bbox.x * cos(rotation.y) + bbox.z * sin(rotation.y);
+            bbox_final.z = -bbox.x * sin(rotation.y) + bbox.z * cos(rotation.y);
+
+            //rotaciona ponto em X
+            bbox_final.y = bbox.y * cos(rotation.x) - bbox.z * sin(rotation.x);
+            bbox_final.z = bbox.y * sin(rotation.x) + bbox.z * cos(rotation.x);
+            
+            return bbox_final;
+        }
+
+        bool checkCollision(vector<Object *> vect){
+            for(auto const obj : vect){
+                if(obj->name != this->name){
+                    switch (obj->obj_type) {
+                        case SPHERE:
+                        case PLANE:
+                        case AABB:
+                            return checkCollisionAABB(obj);
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
+        bool checkCollisionAABB(Object* obj){
+            bool col_x = false;
+            bool col_y = false;
+            bool col_z = false;
+
+            if(this->bbox_max.x * this->scale.x + this->pos.x >= obj->bbox_min.x * obj->scale.x + obj->pos.x
+               && obj->bbox_max.x * obj->scale.x + obj->pos.x >= this->bbox_min.x * this->scale.x + this->pos.x) {
+                col_x = true;
+            }
+
+            if(this->bbox_max.y * this->scale.y + this->pos.y >= obj->bbox_min.y * obj->scale.y + obj->pos.y
+               && obj->bbox_max.y * obj->scale.y + obj->pos.y >= this->bbox_min.y * this->scale.y + this->pos.y) {
+                col_y = true;
+            }
+
+            if(this->bbox_max.z * this->scale.z + this->pos.z >= obj->bbox_min.z * obj->scale.z + obj->pos.z
+               && obj->bbox_max.z * obj->scale.z + obj->pos.z >= this->bbox_min.z * this->scale.z + this->pos.z) {
+                col_z = true;
+            }
+
+            if(col_x && col_y && col_z){
+//                obj->destroyed = true;
+                printf("touched %s\n", obj->name.c_str());
+                return true;
+            }
+
+            return false;
+        }
+
         void checkCollisionAABB(vector<Object *> vect){
-            for(auto const a : vect){
-                if(a->name != this->name){
+            for(auto const obj : vect){
+                if(obj->name != this->name){
                     bool col_x = false;
                     bool col_y = false;
                     bool col_z = false;
 
-                    if(this->bbox_max.x * this->scale.x + this->pos.x >= a->bbox_min.x * a->scale.x + a->pos.x
-                       && a->bbox_max.x * a->scale.x + a->pos.x >= this->bbox_min.x * this->scale.x + this->pos.x) {
+                    if(this->bbox_max.x * this->scale.x + this->pos.x >= obj->bbox_min.x * obj->scale.x + obj->pos.x
+                       && obj->bbox_max.x * obj->scale.x + obj->pos.x >= this->bbox_min.x * this->scale.x + this->pos.x) {
                         col_x = true;
                     }
 
-                    if(this->bbox_max.y * this->scale.y + this->pos.y >= a->bbox_min.y * a->scale.y + a->pos.y
-                       && a->bbox_max.y * a->scale.y + a->pos.y >= this->bbox_min.y * this->scale.y + this->pos.y) {
+                    if(this->bbox_max.y * this->scale.y + this->pos.y >= obj->bbox_min.y * obj->scale.y + obj->pos.y
+                       && obj->bbox_max.y * obj->scale.y + obj->pos.y >= this->bbox_min.y * this->scale.y + this->pos.y) {
                         col_y = true;
                     }
 
-                    if(this->bbox_max.z * this->scale.z + this->pos.z >= a->bbox_min.z * a->scale.z + a->pos.z
-                       && a->bbox_max.z * a->scale.z + a->pos.z >= this->bbox_min.z * this->scale.z + this->pos.z) {
+                    if(this->bbox_max.z * this->scale.z + this->pos.z >= obj->bbox_min.z * obj->scale.z + obj->pos.z
+                       && obj->bbox_max.z * obj->scale.z + obj->pos.z >= this->bbox_min.z * this->scale.z + this->pos.z) {
                         col_z = true;
                     }
 
                     if(col_x && col_y && col_z){
-                        a->destroyed = true;
-                        printf("Destroyed %s\n", a->name.c_str());
+                        obj->destroyed = true;
+                        printf("Destroyed %s\n", obj->name.c_str());
                     }
                 }
             }

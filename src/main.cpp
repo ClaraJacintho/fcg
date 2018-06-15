@@ -15,6 +15,7 @@
 #include <iostream>
 #include <Shader.h>
 #include <Skybox.h>
+#include <Tunnel.h>
 #include "fcg_util.hpp"
 // Headers locais, definidos na pasta "include/"
 
@@ -84,6 +85,7 @@ int main(int argc, char* argv[]) {
     // Carregamos os shaders de vértices e de fragmentos que serão utilizados
     // para renderização.
     Shader shader("../../src/shader_vertex.glsl","../../src/shader_fragment.glsl");
+    Shader tunnel_shd("../../src/tunnel_vertex.glsl","../../src/tunnel_fragment.glsl");
 
     model_uniform      = shader.getUniformLocation("model");
     view_uniform       = shader.getUniformLocation("view");
@@ -121,12 +123,38 @@ int main(int argc, char* argv[]) {
     BuildTrianglesAndAddToVirtualScene(&sphere);
     objects.push_back(&sphere);
 
+    Tunnel tunnel;
+
     Object plane(3, "plane","../../data/plane.obj");
     plane.setPos(glm::vec3(0.0f, -2.0f, 0.0f));
     plane.setScale(glm::vec3(2.0f,2.0f,2.0f));
     ComputeNormals(&(plane.model));
     BuildTrianglesAndAddToVirtualScene(&plane);
     objects.push_back(&plane);
+
+    Object cow(2, "cow", "../../data/cow.obj");
+    cow.setPos(glm::vec3(-2.0f,1.0f,0.0f));
+    cow.setScale(glm::vec3(0.2f,0.2f,0.2f));
+    ComputeNormals(&(cow.model));
+    BuildTrianglesAndAddToVirtualScene(&cow);
+    objects.push_back(&cow);
+
+    Object plane2(3, "plane","../../data/plane.obj");
+    plane2.setPos(glm::vec3(2.0f, 0.0f, 0.0f));
+    plane2.setScale(glm::vec3(2.0f,2.0f,2.0f));
+    plane2.setRotation(glm::vec3(0.0f,0.0f,90.0f));
+    ComputeNormals(&(plane2.model));
+    BuildTrianglesAndAddToVirtualScene(&plane2);
+    objects.push_back(&plane2);
+
+
+//    Object plane2(3, "plane-lt","../../data/plane.obj");
+//    plane2.setPos(glm::vec3(0.0f, 0.0f, 2.0f));
+//    plane2.setScale(glm::vec3(4.0f,4.0f,4.0f));
+//    plane2.setRotation(glm::vec3(0.0f,0.0f,-90.0f));
+//    ComputeNormals(&(plane2.model));
+//    BuildTrianglesAndAddToVirtualScene(&plane2);
+//    objects.push_back(&plane2);
 
     // Inicializamos o código para renderização de texto.
     TextRendering_Init();
@@ -145,7 +173,7 @@ int main(int argc, char* argv[]) {
     glm::mat4 the_model;
     glm::mat4 the_view;
 
-    int number_of_objects = g_VirtualScene.size();
+    int number_of_objects = objects.size();
 
     // Ficamos em loop, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window)) {
@@ -173,7 +201,7 @@ int main(int argc, char* argv[]) {
         glm::mat4 projection;
 
         float nearplane = -0.1f;
-        float farplane  = -10.0f;
+        float farplane  = -100.0f;
 
         if (g_UsePerspectiveProjection) {
             float field_of_view = M_PI / 3.0f;
@@ -205,6 +233,8 @@ int main(int argc, char* argv[]) {
         }
 
         shader.deactivate();
+
+        tunnel.draw(tunnel_shd);
 
         /*glDepthFunc(GL_LEQUAL);
         skybox.shader.activate();
@@ -281,34 +311,44 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         fflush(stdout);
     }
     if (key == GLFW_KEY_D  && action == GLFW_PRESS){
-        player.move_right();
+//        player.move_right();
+       player.move(glm::vec3(1.0f,0.0f,0.0f));
     }
     if (key == GLFW_KEY_A && action == GLFW_PRESS){
-        player.move_left();
+//        player.move_left();
+        player.move(glm::vec3(-1.0f,0.0f,0.0f));
     }
-       if (key == GLFW_KEY_W  && action == GLFW_PRESS){
-        player.move_up();
+    if (key == GLFW_KEY_W  && action == GLFW_PRESS){
+//        player.move_up();
+        player.move(glm::vec3(0.0f,1.0f,0.0f));
     }
     if (key == GLFW_KEY_S && action == GLFW_PRESS){
-        player.move_down();
+//        player.move_down();
+        player.move(glm::vec3(0.0f,-1.0f,0.0f));
     }
-       if (key == GLFW_KEY_Q  && action == GLFW_PRESS){
-        player.move_foward();
+    if (key == GLFW_KEY_Q  && action == GLFW_PRESS){
+//        player.move_foward();
+        player.move(glm::vec3(0.0f,0.0f,1.0f));
     }
     if (key == GLFW_KEY_E && action == GLFW_PRESS){
-        player.move_backwards();
+//        player.move_backwards();
+        player.move(glm::vec3(0.0f,0.0f,-1.0f));
     }
     if (key == GLFW_KEY_D  && action == GLFW_RELEASE){
-        player.unturn_right();
+//        player.unturn_right();
+        player.move(glm::vec3(0.0f,0.0f,0.0f));
     }
     if (key == GLFW_KEY_A && action == GLFW_RELEASE){
-        player.unturn_left();
+//        player.unturn_left();
+        player.move(glm::vec3(0.0f,0.0f,0.0f));
     }
-       if (key == GLFW_KEY_W  && action == GLFW_RELEASE){
-        player.unturn_up();
+    if (key == GLFW_KEY_W  && action == GLFW_RELEASE){
+//        player.unturn_up();
+        player.move(glm::vec3(0.0f,0.0f,0.0f));
     }
     if (key == GLFW_KEY_S && action == GLFW_RELEASE){
-        player.unturn_down();
+//        player.unturn_down();
+        player.move(glm::vec3(0.0f,0.0f,0.0f));
     }
 
 

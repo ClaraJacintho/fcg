@@ -242,40 +242,6 @@ void DrawVirtualObject(const char* object_name)
     glBindVertexArray(0);
 }
 
-// Fun��o que carrega os shaders de v�rtices e de fragmentos que ser�o
-// utilizados para renderiza��o. Veja slide 217 e 219 do documento
-// "Aula_03_Rendering_Pipeline_Grafico.pdf".
-//
-/*void LoadShadersFromFiles()
-{
-    vertex_shader_id = LoadShader_Vertex("../../src/shader_vertex.glsl");
-    fragment_shader_id = LoadShader_Fragment("../../src/shader_fragment.glsl");
-
-    // Deletamos o programa de GPU anterior, caso ele exista.
-    if ( program_id != 0 )
-        glDeleteProgram(program_id);
-
-    // Criamos um programa de GPU utilizando os shaders carregados acima.
-    program_id = CreateGpuProgram(vertex_shader_id, fragment_shader_id);
-
-    // Buscamos o endere�o das vari�veis definidas dentro do Vertex Shader.
-    // Utilizaremos estas vari�veis para enviar dados para a placa de v�deo
-    // (GPU)! Veja arquivo "shader_vertex.glsl" e "shader_fragment.glsl".
-    model_uniform           = glGetUniformLocation(program_id, "model"); // Vari�vel da matriz "model"
-    view_uniform            = glGetUniformLocation(program_id, "view"); // Vari�vel da matriz "view" em shader_vertex.glsl
-    projection_uniform      = glGetUniformLocation(program_id, "projection"); // Vari�vel da matriz "projection" em shader_vertex.glsl
-    object_id_uniform       = glGetUniformLocation(program_id, "object_id"); // Vari�vel "object_id" em shader_fragment.glsl
-    bbox_min_uniform        = glGetUniformLocation(program_id, "bbox_min");
-    bbox_max_uniform        = glGetUniformLocation(program_id, "bbox_max");
-
-    // Vari�veis em "shader_fragment.glsl" para acesso das imagens de textura
-    glUseProgram(program_id);
-    glUniform1i(glGetUniformLocation(program_id, "TextureImage0"), 0);
-    glUniform1i(glGetUniformLocation(program_id, "TextureImage1"), 1);
-    glUniform1i(glGetUniformLocation(program_id, "TextureImage2"), 2);
-    glUseProgram(0);
-}*/
-
 // Fun��o que pega a matriz M e guarda a mesma no topo da pilha
 void PushMatrix(glm::mat4 M)
 {
@@ -434,6 +400,15 @@ void BuildTrianglesAndAddToVirtualScene(Object* obj)
             }
         }
 
+        obj->bbox_min.x = bbox_min.x;
+        obj->bbox_min.y = bbox_min.y;
+        obj->bbox_min.z = bbox_min.z;
+//        obj->bbox_min.w = 1.0f;
+        obj->bbox_max.x = bbox_max.x;
+        obj->bbox_max.y = bbox_max.y;
+        obj->bbox_max.z = bbox_max.z;
+//        obj->bbox_max.w = 1.0f;
+
         size_t last_index = indices.size() - 1;
 
         SceneObject theobject;
@@ -442,18 +417,11 @@ void BuildTrianglesAndAddToVirtualScene(Object* obj)
         theobject.num_indices    = last_index - first_index + 1; // N�mero de indices
         theobject.rendering_mode = GL_TRIANGLES;       // �ndices correspondem ao tipo de rasteriza��o GL_TRIANGLES.
         theobject.vertex_array_object_id = vertex_array_object_id;
-
         theobject.bbox_min = bbox_min;
         theobject.bbox_max = bbox_max;
 
-        obj->bbox_min.x = bbox_min.x;
-        obj->bbox_min.y = bbox_min.y;
-        obj->bbox_min.z = bbox_min.z;
-        obj->bbox_max.x = bbox_max.x;
-        obj->bbox_max.y = bbox_max.y;
-        obj->bbox_max.z = bbox_max.z;
-
-        g_VirtualScene[(obj->model).shapes[shape].name] = theobject;
+//        g_VirtualScene[(obj->model).shapes[shape].name] = theobject;
+        g_VirtualScene[obj->name] = theobject;
     }
 
     GLuint VBO_model_coefficients_id;

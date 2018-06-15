@@ -319,4 +319,4 @@ add_executable(fcg
         src/Player.cpp
         src/stb_image.cpp
         src/textrendering.cpp
-        src/tiny_obj_loader.cpp include/Shader.h include/Skybox.h include/Camera.h)
+        src/tiny_obj_loader.cpp include/Shader.h include/Skybox.h include/Camera.h include/Tunnel.h)
