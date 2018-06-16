@@ -1,3 +1,4 @@
+/*
 #include <iostream>
 #include <cmath>
 #include "Player.h"
@@ -69,9 +70,11 @@ void Player::update_player(double dt, vector<Object*> objs){
     this->speed.y = (speed.y >= MAX_SPEED ? MAX_SPEED : speed.y);
     this->speed.z = (speed.z >= MAX_SPEED ? MAX_SPEED : speed.z);
 
-    this->pos.x += speed.x * dt;
-    this->pos.y += speed.y * dt;
-    this->pos.z += speed.z * dt;
+    glm::vec3 newpos(this->pos.x + this->speed.x * dt,
+                     this->pos.y + this->speed.y * dt,
+                     this->pos.z + this->speed.z * dt);
+
+    this->setPos(newpos);
 }
 
 void Player::unturn_left(){
@@ -100,3 +103,4 @@ void Player::move(glm::vec3 direction) {
 }
 
 
+*/

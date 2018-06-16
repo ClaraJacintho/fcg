@@ -6,6 +6,9 @@
 #include <tiny_obj_loader.h>
 #include <glm/vec3.hpp>
 #include <math.h>
+#include <glad/glad.h>
+#include "matrices.h"
+
 #define SPHERE 1
 #define AABB 2
 #define PLANE 3
@@ -40,82 +43,156 @@ struct ObjModel {
 
 //std::map<std::string, SceneObject> g_VirtualScene;
 
-class Object
-{
-    public:
-        string name;
-        glm::vec3 scale;
-        glm::vec3 pos;   //Position X, Y and Z
-        glm::vec3 rad;   //Angles of rotation X, Y and Z
-        ObjModel model; //Vertices etc
-        bool destroyed;
-        glm::vec3 bbox_min;
-        glm::vec3 bbox_max;
-        int obj_type;
+class Object {
+public:
+    string name;
+    glm::vec3 scale;
+    glm::vec3 pos;   //Position X, Y and Z
+    glm::vec3 rad;   //Angles of rotation X, Y and Z
+    ObjModel model; //Vertices etc
+    bool destroyed;
+    glm::vec3 bbox_min;
+    glm::vec3 bbox_max;
+    int obj_type;
 
-        Object(int obj_type, string name, const char *file_name, const char *mtl_basepath = nullptr)
-                : model(file_name, mtl_basepath, true) {
-            ///TO DO: Actually call this functions here instead of in main
-            ///ComputeNormals(&(this->model));
-            ///BuildTrianglesAndAddToVirtualScene(&(this->model));
+    Object(int obj_type, string name, const char *file_name, const char *mtl_basepath = nullptr)
+            : model(file_name, mtl_basepath, true) {
+        ///TO DO: Actually call this functions here instead of in main
+        ///ComputeNormals(&(this->model));
+        ///BuildTrianglesAndAddToVirtualScene(&(this->model));
 
-            this->name      = name;
-            this->scale     = glm::vec3(1.0f,1.0f,1.0f);
-            this->pos       = glm::vec3(0.0f,0.0f,0.0f);
-            this->rad       = glm::vec3(0.0f,0.0f,0.0f);
-            this->destroyed = false;
-            this->obj_type  = obj_type;
-        }
+        this->name      = name;
+        this->scale     = glm::vec3(1.0f,1.0f,1.0f);
+        this->pos       = glm::vec3(0.0f,0.0f,0.0f);
+        this->rad       = glm::vec3(0.0f,0.0f,0.0f);
+        this->destroyed = false;
+        this->obj_type  = obj_type;
+    }
 
-        Object(string name, const char *file_name, const char *mtl_basepath = nullptr)
-                : model(file_name, mtl_basepath, true) {
-            ///TO DO: Actually call this functions here instead of in main
-            ///ComputeNormals(&(this->model));
-            ///BuildTrianglesAndAddToVirtualScene(&(this->model));
+    Object(string name, const char *file_name, const char *mtl_basepath = nullptr)
+            : model(file_name, mtl_basepath, true) {
+        ///TO DO: Actually call this functions here instead of in main
+        ///ComputeNormals(&(this->model));
+        ///BuildTrianglesAndAddToVirtualScene(&(this->model));
 
-            this->name      = name;
-            this->scale     = glm::vec3(1.0f,1.0f,1.0f);
-            this->pos       = glm::vec3(0.0f,0.0f,0.0f);
-            this->rad       = glm::vec3(0.0f,0.0f,0.0f);
-            this->destroyed = false;
-            this->obj_type  = AABB;
-        }
+        this->name      = name;
+        this->scale     = glm::vec3(1.0f,1.0f,1.0f);
+        this->pos       = glm::vec3(0.0f,0.0f,0.0f);
+        this->rad       = glm::vec3(0.0f,0.0f,0.0f);
+        this->destroyed = false;
+        this->obj_type  = AABB;
+    }
 
-        void setPos(glm::vec3 pos_v){
-            this->pos = pos_v;
-        }
+    void setPos(glm::vec3 pos_v){
+        glm::vec3 pos_delta = pos_v - this->pos;
+        this->pos += pos_delta;
 
-        void setScale(glm::vec3 scale_v){
-            this->scale = scale_v;
-        }
+        this->bbox_max = translateBBox(this->bbox_max, pos_delta);
+        this->bbox_min = translateBBox(this->bbox_min, pos_delta);
+    }
 
-        void setRotation(glm::vec3 angles_v){
-            this->rad.x = (float)(angles_v.x * M_PI / 180);
-            this->rad.y = (float)(angles_v.y * M_PI / 180);
-            this->rad.z = (float)(angles_v.z * M_PI / 180);
+    void setScale(glm::vec3 scale_v){
+        this->scale = scale_v;
 
-            this->bbox_max = rotateBBox(this->bbox_max, this->rad);
-            this->bbox_min = rotateBBox(this->bbox_min, this->rad);
+        this->bbox_max = scaleBBox(this->bbox_max, this->scale);
+        this->bbox_min = scaleBBox(this->bbox_min, this->scale);
+    }
 
-        }
+    void setRotation(glm::vec3 angles_v){
+        this->rad.x = (float)(angles_v.x * M_PI / 180);
+        this->rad.y = (float)(angles_v.y * M_PI / 180);
+        this->rad.z = (float)(angles_v.z * M_PI / 180);
 
-        glm::vec3 rotateBBox(glm::vec3 bbox, glm::vec3 rotation){
-            glm::vec3 bbox_final;
+        this->bbox_max = rotateBBox(this->bbox_max, this->rad);
+        this->bbox_min = rotateBBox(this->bbox_min, this->rad);
+    }
 
-            //rotaciona ponto em Z
-            bbox_final.x = bbox.x * cos(rotation.z) - bbox.y * sin(rotation.z);
-            bbox_final.y = bbox.x * sin(rotation.z) + bbox.y * cos(rotation.z);
+    glm::vec3 rotateBBox(glm::vec3 bbox, glm::vec3 rotation){
+        glm::vec4 bbox4(bbox.x,bbox.y,bbox.z,1.0f);
 
-            //rotaciona ponto em Y
-            bbox_final.x = bbox.x * cos(rotation.y) + bbox.z * sin(rotation.y);
-            bbox_final.z = -bbox.x * sin(rotation.y) + bbox.z * cos(rotation.y);
+        glm::mat4 rotx = Matrix_Rotate_X(rotation.x);
+        glm::mat4 roty = Matrix_Rotate_Y(rotation.y);
+        glm::mat4 rotz = Matrix_Rotate_Z(rotation.z);
 
-            //rotaciona ponto em X
-            bbox_final.y = bbox.y * cos(rotation.x) - bbox.z * sin(rotation.x);
-            bbox_final.z = bbox.y * sin(rotation.x) + bbox.z * cos(rotation.x);
+        bbox4 = rotz * roty * rotx * bbox4;
 
-            return bbox_final;
-        }
+        glm::vec3 bboxfinal(bbox4);
+
+        return bboxfinal;
+    }
+
+    glm::vec3 scaleBBox(glm::vec3 bbox, glm::vec3 scaling){
+        glm::vec3 bbox_final;
+
+        //rotaciona ponto em Z
+        bbox_final = bbox * scaling;
+
+        return bbox_final;
+    }
+
+    glm::vec3 translateBBox(glm::vec3 bbox, glm::vec3 position){
+        glm::vec3 bbox_final;
+
+        //rotaciona ponto em Z
+        bbox_final = bbox + position;
+
+        return bbox_final;
+    }
+
+    void printBBox(){
+        std::cout << this->name
+                  << " bbox max: "
+                  << this->bbox_max.x << " "
+                  << this->bbox_max.y << " "
+                  << this->bbox_max.z << " "
+                  << std::endl;
+
+        std::cout << this->name
+                  << " bbox min: "
+                  << this->bbox_min.x << " "
+                  << this->bbox_min.y << " "
+                  << this->bbox_min.z << " "
+                  << std::endl;
+    }
+
+    void drawAxisAlignedBoundingBox() {
+        glPushAttrib(GL_LIGHTING_BIT);
+
+        glEnable(GL_COLOR_MATERIAL);
+        glDisable(GL_LIGHTING);
+
+        glColor3f(0.0f, 0.0f, 0.0f);
+
+        glBegin(GL_LINE_LOOP);
+        glVertex3f(bbox_min.x, bbox_max.y, bbox_max.z);
+        glVertex3f(bbox_min.x, bbox_min.y, bbox_max.z);
+        glVertex3f(bbox_max.x, bbox_min.y, bbox_max.z);
+        glVertex3f(bbox_max.x, bbox_max.y, bbox_max.z);
+        glEnd();
+
+        glBegin(GL_LINE_LOOP);
+        glVertex3f(bbox_max.x, bbox_max.y, bbox_min.z);
+        glVertex3f(bbox_min.x, bbox_max.y, bbox_min.z);
+        glVertex3f(bbox_min.x, bbox_min.y, bbox_min.z);
+        glVertex3f(bbox_max.x, bbox_min.y, bbox_min.z);
+        glEnd();
+
+        glBegin(GL_LINE_LOOP);
+        glVertex3f(bbox_min.x, bbox_max.y, bbox_max.z);
+        glVertex3f(bbox_min.x, bbox_max.y, bbox_min.z);
+        glVertex3f(bbox_min.x, bbox_min.y, bbox_min.z);
+        glVertex3f(bbox_min.x, bbox_min.y, bbox_max.z);
+        glEnd();
+
+        glBegin(GL_LINE_LOOP);
+        glVertex3f(bbox_max.x, bbox_max.y, bbox_min.z);
+        glVertex3f(bbox_max.x, bbox_min.y, bbox_min.z);
+        glVertex3f(bbox_max.x, bbox_min.y, bbox_max.z);
+        glVertex3f(bbox_max.x, bbox_max.y, bbox_max.z);
+        glEnd();
+
+        glPopAttrib();
+    }
 };
 
 

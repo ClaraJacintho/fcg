@@ -315,8 +315,7 @@ add_executable(fcg
         include/utils.h
         src/glad.c
         src/main.cpp
-        src/Object.cpp
-        src/Player.cpp
         src/stb_image.cpp
         src/textrendering.cpp
-        src/tiny_obj_loader.cpp include/Shader.h include/Skybox.h include/Camera.h include/Tunnel.h)
+        src/tiny_obj_loader.cpp include/Shader.h include/Skybox.h include/Camera.h include/Tunnel.h include/Sphere.h
+        src/Sphere.cpp)

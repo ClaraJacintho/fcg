@@ -110,46 +110,48 @@ int main(int argc, char* argv[]) {
     vector<Object*> objects;
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
-    player.setPos(glm::vec3(0.0f,-1.0f,0.0f));
-    player.setScale(glm::vec3(0.05f,0.05f,0.05f));
-    player.setRotation(glm::vec3(-22.5f,180.0f,0.0f));
     ComputeNormals(&(player.model));
     BuildTrianglesAndAddToVirtualScene(&player);
+    player.setRotation(glm::vec3(-22.5f,180.0f,0.0f));
+    player.setScale(glm::vec3(0.05f,0.05f,0.05f));
+    player.setPos(glm::vec3(0.0f,-1.0f,0.0f));
     objects.push_back(&player);
-    std::cout << player.bbox_max.x << std::endl;
-    std::cout << player.bbox_max.y << std::endl;
-    std::cout << player.bbox_max.z << std::endl;
+    player.printBBox();
 
     Sphere sphere("sphere","../../data/sphere.obj");
-    sphere.setPos(glm::vec3(1.0f,1.0f,-1.0f));
-    sphere.setScale(1);
     ComputeNormals(&(sphere.model));
     BuildTrianglesAndAddToVirtualScene(&sphere);
+    sphere.setScale(1);
+    sphere.setPos(glm::vec3(1.0f,1.0f,-1.0f));
     objects.push_back(&sphere);
+    sphere.printBBox();
 
     Tunnel tunnel;
 
     Object plane(3, "plane","../../data/plane.obj");
-    plane.setPos(glm::vec3(0.0f, -2.0f, 0.0f));
-    plane.setScale(glm::vec3(2.0f,2.0f,2.0f));
     ComputeNormals(&(plane.model));
     BuildTrianglesAndAddToVirtualScene(&plane);
+    plane.setScale(glm::vec3(2.0f,2.0f,2.0f));
+    plane.setPos(glm::vec3(0.0f, -2.0f, 0.0f));
     objects.push_back(&plane);
+    plane.printBBox();
 
     Object cow(2, "cow", "../../data/cow.obj");
-    cow.setPos(glm::vec3(-2.0f,1.0f,0.0f));
-    cow.setScale(glm::vec3(0.2f,0.2f,0.2f));
     ComputeNormals(&(cow.model));
     BuildTrianglesAndAddToVirtualScene(&cow);
+    cow.setScale(glm::vec3(0.2f,0.2f,0.2f));
+    cow.setPos(glm::vec3(-2.0f,1.0f,0.0f));
     objects.push_back(&cow);
+    cow.printBBox();
 
     Object plane2(3, "plane","../../data/plane.obj");
-    plane2.setPos(glm::vec3(2.0f, 0.0f, 0.0f));
-    plane2.setScale(glm::vec3(2.0f,2.0f,2.0f));
-    plane2.setRotation(glm::vec3(0.0f,0.0f,90.0f));
     ComputeNormals(&(plane2.model));
     BuildTrianglesAndAddToVirtualScene(&plane2);
+    plane2.setRotation(glm::vec3(0.0f,0.0f,90.0f));
+    plane2.setScale(glm::vec3(2.0f,2.0f,2.0f));
+    plane2.setPos(glm::vec3(2.0f, 0.0f, 0.0f));
     objects.push_back(&plane2);
+    plane2.printBBox();
 
 
 //    Object plane2(3, "plane-lt","../../data/plane.obj");
@@ -252,9 +254,15 @@ int main(int argc, char* argv[]) {
         glDepthFunc(GL_LESS);
         skybox.shader.deactivate();*/
 
-        TextRendering_ShowEulerAngles(window);
-        TextRendering_ShowProjection(window);
         TextRendering_ShowFramesPerSecond(window);
+
+        glm::vec4 pos4(player.pos.x,player.pos.y,player.pos.z,0.0f);
+        glm::vec4 bbmin4(player.bbox_min.x,player.bbox_min.y,player.bbox_min.z,0.0f);
+        glm::vec4 bbmax4(player.bbox_max.x,player.bbox_max.y,player.bbox_max.z,0.0f);
+
+        TextRendering_PrintVector(window,pos4,0,0);
+        TextRendering_PrintVector(window,bbmax4,-0.9,0);
+        TextRendering_PrintVector(window,bbmin4,-0.9,0.9);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
