@@ -37,9 +37,9 @@ class Obstacle {
                 float y = MIN + (rand() % (MAX +1) + MIN);
                 glm::vec3 pos1 =  glm::vec3(x, y,this->obj->pos.z -15.0f);
 
-                cout << pos1.x << endl;
-                cout << pos1.y << endl;
-                cout << pos1.z << endl;
+//                cout << pos1.x << endl;
+//                cout << pos1.y << endl;
+//                cout << pos1.z << endl;
                 this->obj->setPos( pos1);
             }
 

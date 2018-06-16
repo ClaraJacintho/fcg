@@ -34,10 +34,11 @@
 #define OBSTACLE_SPEED 0.03
 
 void randomize_position(vector<Object *> planes);
+bool free_camera = false;
 Player player;
 double dt = 0.0f;
 double lastFrame = 0.0f;
-
+int g_Walking = 0, g_Strafing = 0;
 int main(int argc, char* argv[]) {
     int success = glfwInit();
     if (!success) {
@@ -242,7 +243,9 @@ int main(int argc, char* argv[]) {
     glm::mat4 the_view;
 
     int number_of_objects = objects.size();
-
+    glm::vec4 camera_position_c;
+    glm::vec4 camera_view_vector;
+    glm::vec4 camera_up_vector;
     // Ficamos em loop, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window)) {
 
@@ -265,13 +268,30 @@ int main(int argc, char* argv[]) {
 
         player.update_player(dt, objects);
 
-        // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
-        glm::vec4 camera_position_c = glm::vec4(player.pos.x, player.pos.y + 2.0f, player.pos.z + 3.0f, 1.0f);
-        glm::vec4 camera_lookat_l = glm::vec4(player.pos.x, player.pos.y, player.pos.z, 1.0f);
-        glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c;
-        glm::vec4 camera_up_vector = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+        if(free_camera){
+
+            glm::vec4 camera_lookat_l    = glm::vec4(0.0f,0.0f,-1.0f,1.0f); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
+            // Vetor "view", sentido para onde a câmera está virada
+            camera_view_vector = glm::vec4(cos(g_CameraPhi)*sin(g_CameraTheta),
+                                                     -sin(g_CameraPhi),
+                                                     cos(g_CameraPhi)*cos(g_CameraTheta),
+                                                     0.0f);
+            camera_up_vector   = glm::vec4(0.0f,1.0f,0.0f,0.0f); // Vetor "up" fixado para apontar para o "céu" (eito Y global)
+
+            camera_position_c = camera_position_c + 0.05f * g_Walking * camera_view_vector;
+            camera_position_c = camera_position_c + 0.05f * g_Strafing * crossproduct(camera_view_vector, camera_up_vector);
+
+        }else{
+
+            camera_position_c = glm::vec4(player.pos.x, player.pos.y + 2.0f, player.pos.z + 3.0f, 1.0f);
+            // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
+            glm::vec4 camera_lookat_l = glm::vec4(player.pos.x, player.pos.y, player.pos.z, 1.0f);
+            camera_view_vector = camera_lookat_l - camera_position_c;
+            camera_up_vector = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+        }
 
         glm::mat4 view = Matrix_Camera_View(camera_position_c, camera_view_vector, camera_up_vector);
+
         glm::mat4 projection;
 
         float nearplane = -0.1f;
@@ -326,10 +346,10 @@ int main(int argc, char* argv[]) {
             glm::vec4 pos4(player.pos.x, player.pos.y, player.pos.z, 0.0f);
             glm::vec4 bbmin4(player.bbox_min.x, player.bbox_min.y, player.bbox_min.z, 0.0f);
             glm::vec4 bbmax4(player.bbox_max.x, player.bbox_max.y, player.bbox_max.z, 0.0f);
-
-            TextRendering_PrintVector(window, pos4, 0, 0);
-            TextRendering_PrintVector(window, bbmax4, -0.9, 0);
-            TextRendering_PrintVector(window, bbmin4, -0.9, 0.9);
+//
+//            TextRendering_PrintVector(window, pos4, 0, 0);
+//            TextRendering_PrintVector(window, bbmax4, -0.9, 0);
+//            TextRendering_PrintVector(window, bbmin4, -0.9, 0.9);
 
             //TextRendering_PrintString(window, "Elle est pas belle, la vie?", -0.9, 0.9);
 
@@ -427,6 +447,24 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
     }
     if (key == GLFW_KEY_S && action == GLFW_RELEASE){
         player.move(glm::vec3(0.0f,0.0f,0.0f));
+    }
+    if(key == GLFW_KEY_L && action == GLFW_PRESS){
+        free_camera = !free_camera;
+    }
+    if (key == GLFW_KEY_UP){
+        g_Walking = (action != GLFW_RELEASE) ? 1 : 0;
+    }
+
+    if (key == GLFW_KEY_DOWN){
+        g_Walking = (action != GLFW_RELEASE) ? -1 : 0;
+    }
+
+    if (key == GLFW_KEY_LEFT){
+        g_Strafing = (action != GLFW_RELEASE) ? -1 : 0;
+    }
+
+    if (key == GLFW_KEY_RIGHT){
+        g_Strafing = (action != GLFW_RELEASE) ? 1 : 0;
     }
 }
 
