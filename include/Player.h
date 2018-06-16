@@ -58,11 +58,14 @@ public:
             if(obj->name != this->name){
                 switch (obj->obj_type) {
                     case SPHERE:
-                        //checkCollisionSphere((Sphere *) obj);
-                        //break;
+                        checkCollisionSphere((Sphere *) obj);
+                        break;
                     case PLANE:
+                        checkCollisionPlane(obj);
+                        break;
                     case AABB:
                         checkCollisionAABB(obj);
+                        break;
                     default:
                         break;
                 }
@@ -75,20 +78,20 @@ public:
         bool col_y = false;
         bool col_z = false;
 
-        if(this->bbox_max.x > obj->bbox_min.x
-           && obj->bbox_max.x > this->bbox_min.x) {
+        if(this->bbox_max.x >= obj->bbox_min.x
+           && obj->bbox_max.x >= this->bbox_min.x) {
             col_x = true;
             //            std::cout << "col_x: " << this->name << " " << obj->name << std::endl;
         }
 
-        if(this->bbox_max.y > obj->bbox_min.y
-           && obj->bbox_max.y > this->bbox_min.y) {
+        if(this->bbox_max.y >= obj->bbox_min.y
+           && obj->bbox_max.y >= this->bbox_min.y) {
             col_y = true;
             //            std::cout << "col_y: " << this->name << " " << obj->name << std::endl;
         }
 
-        if(this->bbox_max.z > obj->bbox_min.z
-           && obj->bbox_max.z > this->bbox_min.z) {
+        if(this->bbox_max.z >= obj->bbox_min.z
+           && obj->bbox_max.z >= this->bbox_min.z) {
             col_z = true;
             //            std::cout << "col_z: " << this->name << " " << obj->name << std::endl;
         }
@@ -226,7 +229,7 @@ public:
             float distance = dot((this->pos - obj->pos),(plane_normal));
             distance -= half_extents.x;
 
-            cout << "distance" << endl;
+            /*cout << "distance" << endl;
             cout << distance << endl;
             cout << "normal" << endl;
             cout << plane_normal.x << endl;
@@ -247,10 +250,10 @@ public:
             cout << "Halves" <<endl;
             cout << half_extents_plane.x <<endl;
             cout << half_extents_plane.y <<endl;
-            cout << half_extents_plane.z <<endl;
+            cout << half_extents_plane.z <<endl;*/
 
             if(distance < 0){
-             //   cout << "plane boom";
+                cout << "plane boom";
             }
 
         }

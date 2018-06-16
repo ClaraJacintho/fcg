@@ -2144,3 +2144,175 @@
 
 1529102463 c:\users\maria\desktop\fcg\include\pane.h
 
+1529014507 source:c:\users\user\desktop\ufrgs\fcg\fcg\src\object.cpp
+	<glm/vec3.hpp>
+	"Object.h"
+
+1529115886 c:\users\user\desktop\ufrgs\fcg\fcg\include\object.h
+	<iostream>
+	<string>
+	<tiny_obj_loader.h>
+	<glm/vec3.hpp>
+	<math.h>
+	<glad/glad.h>
+	"matrices.h"
+
+1528750983 c:\users\user\desktop\ufrgs\fcg\fcg\include\matrices.h
+	<cstdio>
+	<cstdlib>
+	<glm/mat4x4.hpp>
+	<glm/vec4.hpp>
+	<glm/gtc/matrix_transform.hpp>
+
+1528750982 c:\users\user\desktop\ufrgs\fcg\fcg\include\glm\gtc\matrix_transform.hpp
+	"../mat4x4.hpp"
+	"../vec2.hpp"
+	"../vec3.hpp"
+	"../vec4.hpp"
+	"../gtc/constants.hpp"
+	"matrix_transform.inl"
+
+1528750982 c:\users\user\desktop\ufrgs\fcg\fcg\include\glm\gtc\constants.hpp
+	"../detail/setup.hpp"
+	"constants.inl"
+
+1528750982 c:\users\user\desktop\ufrgs\fcg\fcg\include\glm\gtc\constants.inl
+	<limits>
+
+1528750982 c:\users\user\desktop\ufrgs\fcg\fcg\include\glm\gtc\matrix_transform.inl
+	"../geometric.hpp"
+	"../trigonometric.hpp"
+	"../matrix.hpp"
+
+1528750983 c:\users\user\desktop\ufrgs\fcg\fcg\include\glm\trigonometric.hpp
+	"detail/func_trigonometric.hpp"
+
+1528750981 c:\users\user\desktop\ufrgs\fcg\fcg\include\glm\detail\func_trigonometric.hpp
+	"setup.hpp"
+	"precision.hpp"
+	"func_trigonometric.inl"
+
+1528750981 c:\users\user\desktop\ufrgs\fcg\fcg\include\glm\detail\func_trigonometric.inl
+	"_vectorize.hpp"
+	<cmath>
+	<limits>
+	"func_trigonometric_simd.inl"
+
+1528750981 c:\users\user\desktop\ufrgs\fcg\fcg\include\glm\detail\func_trigonometric_simd.inl
+
+1528750983 c:\users\user\desktop\ufrgs\fcg\fcg\include\glm\matrix.hpp
+	"detail/func_matrix.hpp"
+
+1529092344 source:c:\users\user\desktop\ufrgs\fcg\fcg\src\sphere.cpp
+
+1529115886 source:c:\users\user\desktop\ufrgs\fcg\fcg\src\main.cpp
+	<iostream>
+	<Shader.h>
+	<Skybox.h>
+	<Tunnel.h>
+	"fcg_util.hpp"
+	"Object.h"
+	"utils.h"
+	"Player.h"
+	"Shader.h"
+	"Sphere.h"
+
+1529014507 c:\users\user\desktop\ufrgs\fcg\fcg\include\shader.h
+	<glad/glad.h>
+	"fcg_util.hpp"
+
+1529034642 c:\users\user\desktop\ufrgs\fcg\fcg\include\fcg_util.hpp
+	<cmath>
+	<cstdio>
+	<cstdlib>
+	<map>
+	<stack>
+	<string>
+	<vector>
+	<limits>
+	<fstream>
+	<sstream>
+	<stdexcept>
+	<algorithm>
+	<glad/glad.h>
+	<GLFW/glfw3.h>
+	<glm/mat4x4.hpp>
+	<glm/vec4.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<stb_image.h>
+	"utils.h"
+	"matrices.h"
+	"Object.h"
+
+1528750982 c:\users\user\desktop\ufrgs\fcg\fcg\include\glm\gtc\type_ptr.hpp
+	"../gtc/quaternion.hpp"
+	"../vec2.hpp"
+	"../vec3.hpp"
+	"../vec4.hpp"
+	"../mat2x2.hpp"
+	"../mat2x3.hpp"
+	"../mat2x4.hpp"
+	"../mat3x2.hpp"
+	"../mat3x3.hpp"
+	"../mat3x4.hpp"
+	"../mat4x2.hpp"
+	"../mat4x3.hpp"
+	"../mat4x4.hpp"
+	<cstring>
+	"type_ptr.inl"
+
+1528750982 c:\users\user\desktop\ufrgs\fcg\fcg\include\glm\gtc\quaternion.hpp
+	"../mat3x3.hpp"
+	"../mat4x4.hpp"
+	"../vec3.hpp"
+	"../vec4.hpp"
+	"../gtc/constants.hpp"
+	"quaternion.inl"
+
+1528750982 c:\users\user\desktop\ufrgs\fcg\fcg\include\glm\gtc\quaternion.inl
+	"../trigonometric.hpp"
+	"../geometric.hpp"
+	"../exponential.hpp"
+	<limits>
+	"quaternion_simd.inl"
+
+1528750982 c:\users\user\desktop\ufrgs\fcg\fcg\include\glm\exponential.hpp
+	"detail/func_exponential.hpp"
+
+1528750982 c:\users\user\desktop\ufrgs\fcg\fcg\include\glm\gtc\quaternion_simd.inl
+
+1528750982 c:\users\user\desktop\ufrgs\fcg\fcg\include\glm\gtc\type_ptr.inl
+	<cstring>
+
+1529014507 c:\users\user\desktop\ufrgs\fcg\fcg\include\skybox.h
+	<string>
+	<vector>
+	<glad/glad.h>
+	<iostream>
+	"stb_image.h"
+	"Object.h"
+	"Shader.h"
+	<fcg_util.hpp>
+
+1529029289 c:\users\user\desktop\ufrgs\fcg\fcg\include\tunnel.h
+	<glad/glad.h>
+	"fcg_util.hpp"
+	"Shader.h"
+
+1529117053 c:\users\user\desktop\ufrgs\fcg\fcg\include\player.h
+	"Object.h"
+	"Sphere.h"
+	<glm/common.hpp>
+	<glm/geometric.hpp>
+
+1529114659 c:\users\user\desktop\ufrgs\fcg\fcg\include\sphere.h
+	"Object.h"
+
+1528750981 c:\users\user\desktop\ufrgs\fcg\fcg\include\glm\common.hpp
+	"detail/func_common.hpp"
+
+1529115886 source:c:\users\user\desktop\ufrgs\fcg\fcg\src\player.cpp
+	<iostream>
+	<cmath>
+	"Player.h"
+
