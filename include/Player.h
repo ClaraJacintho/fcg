@@ -202,16 +202,21 @@ public:
             //https://learnopengl.com/In-Practice/2D-Game/Collisions/Collision-detection
 
             glm::vec3 difference = obj->pos - this->pos;
-
-            glm::vec3 half_extents = (this->bbox_max - this->pos) * this->scale;
-
+             glm::vec3 half_extents;
+             half_extents.x = abs(this->bbox_max.x - this->bbox_min.x) / 2;
+             half_extents.y = abs(this->bbox_max.y - this->bbox_min.y) / 2;
+             half_extents.z = abs(this->bbox_max.z - this->bbox_min.z) / 2;
 
             glm::vec3 clamped = glm::clamp(difference, -half_extents, half_extents);
             glm::vec3 closest = this->pos + clamped;
             difference = closest - obj->pos;
 
-            if(glm::length(difference) < obj->radius){
-                cout << "sphere boom";
+            float a = glm::length(difference);
+            cout << a <<endl;
+
+            if(glm::length(difference) < obj->radius - 0.12){
+               //obj->destroyed = true;
+                cout << "sphere boom" << endl;
             }
 
         }
