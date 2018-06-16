@@ -112,16 +112,18 @@ int main(int argc, char* argv[]) {
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ComputeNormals(&(player.model));
     BuildTrianglesAndAddToVirtualScene(&player);
+    player.update_bbox();
     player.setRotation(glm::vec3(-22.5f,180.0f,0.0f));
     player.setScale(glm::vec3(0.05f,0.05f,0.05f));
     player.setPos(glm::vec3(0.0f,-1.0f,0.0f));
+    player.fix_bbox();
     objects.push_back(&player);
     player.printBBox();
 
     Sphere sphere("sphere","../../data/sphere.obj");
     ComputeNormals(&(sphere.model));
     BuildTrianglesAndAddToVirtualScene(&sphere);
-    sphere.setScale(1);
+    sphere.setScale(1.0f);
     sphere.setPos(glm::vec3(1.0f,1.0f,-1.0f));
     objects.push_back(&sphere);
     sphere.printBBox();
@@ -140,7 +142,7 @@ int main(int argc, char* argv[]) {
     ComputeNormals(&(cow.model));
     BuildTrianglesAndAddToVirtualScene(&cow);
     cow.setScale(glm::vec3(0.2f,0.2f,0.2f));
-    cow.setPos(glm::vec3(-2.0f,1.0f,0.0f));
+    cow.setPos(glm::vec3(0.0f,0.5f,0.0f));
     objects.push_back(&cow);
     cow.printBBox();
 
