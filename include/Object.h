@@ -14,6 +14,7 @@
 #define PLANE  3
 #define MARS 4
 #define COW 5
+#define SUN 6
 
 #define SPHERE 1
 #define AABB 2

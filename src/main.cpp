@@ -130,27 +130,36 @@ int main(int argc, char* argv[]) {
     objects.push_back(&player);
     player.printBBox();
 
-    Sphere sphere(1,"sphere","../../data/sphere.obj");
-    ComputeNormals(&(sphere.model));
-    BuildTrianglesAndAddToVirtualScene(&sphere);
-    sphere.setScale(1.0f);
-    sphere.setPos(glm::vec3(1.0f,1.0f,-2.0f));
-    objects.push_back(&sphere);
-    Obstacle s(&sphere);
+    Object horse (2,6,"horse","../../data/horse.obj");
+    ComputeNormals(&(horse.model));
+    BuildTrianglesAndAddToVirtualScene(&horse);
+    //sun.setScale(glm::vec3(0.005f,0.005f,0.005f));
+   // sun.setPos(glm::vec3(1.0f,1.0f,-2.0f));
+   // objects.push_back(&sun);
+   // sun.printBBox();
+
+    Sphere earth(1,"sphere","../../data/sphere.obj");
+    ComputeNormals(&(earth.model));
+    BuildTrianglesAndAddToVirtualScene(&earth);
+    earth.setScale(1.0f);
+    earth.setPos(glm::vec3(1.0f,1.0f,-4.0f));
+    objects.push_back(&earth);
+    Obstacle s(&earth);
     s.movement = glm::vec3(OBSTACLE_SPEED,0.0f,0.0f);
     obstacles.push_back(&s);
-    sphere.printBBox();
+    earth.printBBox();
 
-    Sphere sphere2(4,"sphere","../../data/sphere.obj");
-    ComputeNormals(&(sphere2.model));
-    BuildTrianglesAndAddToVirtualScene(&sphere2);
-    sphere2.setScale(1.0f);
-    sphere2.setPos(glm::vec3(1.0f,2.0f,-7.0f));
-    objects.push_back(&sphere2);
-    Obstacle s2(&sphere2);
+
+    Sphere mars(4,"sphere","../../data/sphere.obj");
+    ComputeNormals(&(mars.model));
+    BuildTrianglesAndAddToVirtualScene(&mars);
+    mars.setScale(1.0f);
+    mars.setPos(glm::vec3(1.0f,2.0f,-9.0f));
+    objects.push_back(&mars);
+    Obstacle s2(&mars);
     s2.movement = glm::vec3(-OBSTACLE_SPEED,0.0f,0.0f);
     obstacles.push_back(&s2);
-    sphere.printBBox();
+    mars.printBBox();
 
     Tunnel tunnel;
 
@@ -159,7 +168,7 @@ int main(int argc, char* argv[]) {
     ComputeNormals(&(cow.model));
     BuildTrianglesAndAddToVirtualScene(&cow);
     cow.setScale(glm::vec3(1,1,1));
-    cow.setPos(glm::vec3(0.0f,0.5f,-2));
+    cow.setPos(glm::vec3(0.0f,-3,-2));
      objects.push_back(&cow);
     cow.printBBox();
 
@@ -327,7 +336,47 @@ int main(int argc, char* argv[]) {
                     DrawVirtualObject(objects[i]->name.c_str());
                 }
             }
-            tunnel.draw(tunnel_shd);
+            //TODO: Movimento dos obstaculos de acordo com o tempo nao frames! Que nem personagem!
+            //tunnel.draw(tunnel_shd);
+
+            // sun.setScale(glm::vec3(0.005f,0.005f,0.005f));
+            // sun.setPos(glm::vec3(1.0f,1.0f,-2.0f));
+
+            model = Matrix_Identity();
+            switch(player.lives){
+
+                case 3:
+                    PushMatrix(model);
+                        model = model * Matrix_Translate(player.pos.x  -4.0 ,player.pos.y-3.5f,player.pos.z);
+                        PushMatrix(model);
+                            model = model *  Matrix_Scale(0.001f,0.001,0.001f);
+                            shader.passValue("model", model);
+                            shader.passValue("object_id", horse.obj_type);
+                            DrawVirtualObject(horse.name.c_str());
+                        PopMatrix(model);
+                    PopMatrix(model);
+                case 2:
+                    PushMatrix(model);
+                        model = model *  Matrix_Translate(player.pos.x  -3.5 ,player.pos.y-3.5f,player.pos.z);
+                        PushMatrix(model);
+                            model = model *  Matrix_Scale(0.001f,0.001,0.001f);
+                            shader.passValue("model", model);
+                            shader.passValue("object_id", horse.obj_type);
+                            DrawVirtualObject(horse.name.c_str());
+                        PopMatrix(model);
+                    PopMatrix(model);
+                case 1:
+                    PushMatrix(model);
+                        model = model *  Matrix_Translate(player.pos.x  -3.0 ,player.pos.y-3.5f,player.pos.z);
+                        PushMatrix(model);
+                            model = model *  Matrix_Scale(0.001f,0.001,0.001f);
+                            shader.passValue("model", model);
+                            shader.passValue("object_id", horse.obj_type);
+                            DrawVirtualObject(horse.name.c_str());
+                        PopMatrix(model);
+                    PopMatrix(model);
+                default:break;
+        }
 
             /*glDepthFunc(GL_LEQUAL);
             skybox.shader.activate();
@@ -346,7 +395,7 @@ int main(int argc, char* argv[]) {
             glm::vec4 pos4(player.pos.x, player.pos.y, player.pos.z, 0.0f);
             glm::vec4 bbmin4(player.bbox_min.x, player.bbox_min.y, player.bbox_min.z, 0.0f);
             glm::vec4 bbmax4(player.bbox_max.x, player.bbox_max.y, player.bbox_max.z, 0.0f);
-//
+
 //            TextRendering_PrintVector(window, pos4, 0, 0);
 //            TextRendering_PrintVector(window, bbmax4, -0.9, 0);
 //            TextRendering_PrintVector(window, bbmin4, -0.9, 0.9);

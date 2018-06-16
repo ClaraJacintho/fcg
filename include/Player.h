@@ -12,12 +12,16 @@
 #define TURN_ANGLE 0.3f
 #define MAX_ANGLE 1.2f
 
+
+
 class Player : public Object  {
 public:
     glm::vec3 speed;
     glm::vec3 direction;
     glm::vec3 acceleration;
     double last_update;
+    int lives;
+    bool collision;
 
     Player() : Object("jet", "../../data/jet.obj")
     {
@@ -27,14 +31,21 @@ public:
         this->turned_x = false;
         this->turned_z = false;
         this->last_update = 0;
-
+        this->lives = 3;
+        this->collision = false;
         this->acceleration = glm::vec3(0.0f,0.0f,0.0f);
     }
 
 //        virtual ~Player();
 
     void update_player(double dt, vector<Object*> objs){
-        this->checkCollision(objs);
+        bool col= this->checkCollision(objs);
+        if(!col&&this->collision){
+            this->collision =false;
+            this->lives--;
+            cout << "outch? ";
+            cout << lives;
+        }
         this->speed.x += this->acceleration.x * dt;
         this->speed.y += this->acceleration.y * dt;
         this->speed.z += this->acceleration.z * dt;
@@ -118,27 +129,35 @@ public:
         turned_x = false;
     }
 
-    void checkCollision(vector<Object *> vect){
+    bool checkCollision(vector<Object *> vect){
+        bool ret = false;
         for(auto const obj : vect){
             if(obj->name != this->name){
                 switch (obj->hitbox_type) {
                     case SPHERE:
-                        checkCollisionSphere((Sphere *) obj);
+                         if (checkCollisionSphere((Sphere *) obj)){
+                             ret = true;
+                             this->collision = true;
+                         }
                         break;
                     case PLANE:
-                        checkCollisionPlane(obj);
+                         if(checkCollisionPlane(obj)){
+
+                         }
                         break;
                     case AABB:
-                        checkCollisionAABB(obj);
+                        if(checkCollisionAABB(obj)) {
+                        }
                         break;
                     default:
                         break;
                 }
             }
         }
+        return ret;
     }
 
-    void checkCollisionAABB(Object* obj){
+    bool checkCollisionAABB(Object* obj){
         bool col_x = false;
         bool col_y = false;
         bool col_z = false;
@@ -163,12 +182,13 @@ public:
         if(col_x && col_y && col_z){
            obj->destroyed = true;
             printf("boom %s\n", obj->name.c_str());
-            //return true;
+            return true;
         }
+        return false;
 
     }
 
-    void checkCollisionSphere(Sphere* obj) {
+    bool checkCollisionSphere(Sphere* obj) {
             //https://learnopengl.com/In-Practice/2D-Game/Collisions/Collision-detection
 
             glm::vec3 difference = obj->pos - this->pos;
@@ -182,13 +202,20 @@ public:
             difference = closest - obj->pos;
 
             if(glm::length(difference) < obj->radius ){ //I have no idea how to make this work tbh
-               //this->destroyed = true;
+               if(this->lives < 0){
+                   this->destroyed = true;
+                   cout << "RIP" << endl;
+                   return false;
+               }
+
                 cout << "sphere boom" << endl;
+                return true;
             }
+            return false;
 
         }
 
-        void checkCollisionPlane(Object* obj){
+        bool checkCollisionPlane(Object* obj){
             //https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
             glm::vec3 half_extents = this->bbox_max - this->pos;
             glm::vec3 half_extents_plane = obj->bbox_max - obj->pos;
@@ -222,7 +249,9 @@ public:
             if(abs(distance) < projection){
 
                  cout << "plane boom" <<endl;
+                return true;
             }
+            return false;
 
         }
 
