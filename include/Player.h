@@ -88,10 +88,7 @@ class Player:public Object
 
             glm::vec3 difference = obj->pos - this->pos;
 
-            glm::vec3 half_extents;
-            half_extents.x = ((this->bbox_max.x - this->bbox_min.x) / 2) * this->scale.x;
-            half_extents.y = ((this->bbox_max.y - this->bbox_min.y) / 2) * this->scale.y;
-            half_extents.z = ((this->bbox_max.z - this->bbox_min.z) / 2) * this->scale.z;
+            glm::vec3 half_extents = (this->bbox_max - this->pos) * this->scale;
 
 
             glm::vec3 clamped = glm::clamp(difference, -half_extents, half_extents);
@@ -106,20 +103,39 @@ class Player:public Object
 
         void checkCollisionPlane(Object* obj){
             //cout << "in plane";
-            glm::vec3 half_extents;
-            half_extents.x = ((this->bbox_max.x - this->bbox_min.x) / 2) * this->scale.x;
-            half_extents.y = ((this->bbox_max.y - this->bbox_min.y) / 2) * this->scale.y;
-            half_extents.z = ((this->bbox_max.z - this->bbox_min.z) / 2) * this->scale.z;
+            glm::vec3 half_extents = (this->bbox_max - this->pos) * this->scale;
 
-
-            glm::vec3 p1 = obj->bbox_min * obj->scale + obj->pos;
-            glm::vec3 p2 = obj->bbox_max * obj->scale + obj->pos;
-
+            glm::vec3 half_extents_plane = obj->bbox_max  * obj->scale;
+            glm::vec3 p1 = (obj->bbox_max * obj->scale) + obj->pos;
+            glm::vec3 p2 = p1 - half_extents_plane; //this does not make sense, do not worry
 
             glm::vec3 plane_normal = cross((obj->pos - p1),(obj->pos - p2));
 
-            float distance = dot((this->pos),(plane_normal));
+            float distance = dot((this->pos - obj->pos),(plane_normal));
             distance -= half_extents.x;
+
+            cout << "distance" << endl;
+            cout << distance << endl;
+            cout << "normal" << endl;
+            cout << plane_normal.x << endl;
+            cout << plane_normal.y << endl;
+            cout << plane_normal.z << endl;
+            cout << "Object pos" <<endl;
+            cout << obj->pos.x <<endl;
+            cout << obj->pos.y <<endl;
+            cout << obj->pos.z <<endl;
+            cout << "p1" <<endl;
+            cout<< p1.x <<endl;
+            cout<< p1.y <<endl;
+            cout<< p1.z <<endl;
+            cout << "p2" <<endl;
+            cout<< p2.x <<endl;
+            cout<< p2.y <<endl;
+            cout<< p2.z <<endl;
+            cout << "Halves" <<endl;
+            cout << half_extents_plane.x <<endl;
+            cout << half_extents_plane.y <<endl;
+            cout << half_extents_plane.z <<endl;
 
             if(distance < 0){
              //   cout << "plane boom";

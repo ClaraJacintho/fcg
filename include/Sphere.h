@@ -17,7 +17,7 @@ class Sphere:public Object
 
     void setScale(float new_radius){
             this->scale = glm::vec3(new_radius, new_radius, new_radius);
-            this->radius = new_radius;
+            this->radius = new_radius/2;
         }
 };
 

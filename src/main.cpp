@@ -129,12 +129,12 @@ int main(int argc, char* argv[]) {
 
     Tunnel tunnel;
 
-    Object plane(3, "plane","../../data/plane.obj");
+    /*Object plane(3, "plane","../../data/plane.obj");
     plane.setPos(glm::vec3(0.0f, -2.0f, 0.0f));
     plane.setScale(glm::vec3(2.0f,2.0f,2.0f));
     ComputeNormals(&(plane.model));
     BuildTrianglesAndAddToVirtualScene(&plane);
-    objects.push_back(&plane);
+    objects.push_back(&plane);*/
 
     Object cow(2, "cow", "../../data/cow.obj");
     cow.setPos(glm::vec3(-2.0f,1.0f,0.0f));
