@@ -126,8 +126,8 @@ public:
                         checkCollisionSphere((Sphere *) obj);
                         break;
                     case PLANE:
-//                        checkCollisionPlane(obj);
-//                        break;
+                        checkCollisionPlane(obj);
+                        break;
                     case AABB:
                         checkCollisionAABB(obj);
                         break;
@@ -182,7 +182,7 @@ public:
             difference = closest - obj->pos;
 
             if(glm::length(difference) < obj->radius ){ //I have no idea how to make this work tbh
-               this->destroyed = true;
+               //this->destroyed = true;
                 cout << "sphere boom" << endl;
             }
 
@@ -204,20 +204,20 @@ public:
             }
 
             glm::vec3 plane_normal = cross((obj->pos - p2),(obj->pos - p1));
-            plane_normal = glm::normalize(plane_normal);
+            plane_normal = glm::normalize(plane_normal); //If you dont do this, it works for specific cases
 
             float projection =  half_extents.x * abs(plane_normal .x) + half_extents.y * abs(plane_normal .y) + half_extents.z * abs(plane_normal .z);
             float plane_d = glm::length((obj->pos)-glm::vec3(0.0f,0.0f,0.0f));
 
             float distance = glm::dot(this->pos,(plane_normal)) - plane_d;
-            cout << "distance: ";
-            cout << distance << endl;
-            cout << "Proj: ";
-            cout << projection << endl;
-            cout << "dot: ";
-            cout << glm::dot(this->pos ,(plane_normal))- plane_d << endl;
-            cout << "d: ";
-            cout << plane_d <<endl;
+//            cout << "distance: ";
+//            cout << distance << endl;
+//            cout << "Proj: ";
+//            cout << projection << endl;
+//            cout << "dot: ";
+//            cout << glm::dot(this->pos ,(plane_normal))- plane_d << endl;
+//            cout << "d: ";
+//            cout << plane_d <<endl;
 
             if(abs(distance) < projection){
 

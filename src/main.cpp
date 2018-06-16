@@ -124,7 +124,7 @@ int main(int argc, char* argv[]) {
     player.update_bbox();
     player.setRotation(glm::vec3(-22.5f,180.0f,0.0f));
     player.setScale(glm::vec3(0.05f,0.05f,0.05f));
-    player.setPos(glm::vec3(0.0f,-1.0f,0.0f));
+    player.setPos(glm::vec3(0.0f,0.0f,0.0f));
     player.fix_bbox();
     objects.push_back(&player);
     player.printBBox();
@@ -144,7 +144,7 @@ int main(int argc, char* argv[]) {
     ComputeNormals(&(sphere2.model));
     BuildTrianglesAndAddToVirtualScene(&sphere2);
     sphere2.setScale(1.0f);
-    sphere2.setPos(glm::vec3(1.0f,2.0f,-2.0f));
+    sphere2.setPos(glm::vec3(1.0f,2.0f,-7.0f));
     objects.push_back(&sphere2);
     Obstacle s2(&sphere2);
     s2.movement = glm::vec3(-OBSTACLE_SPEED,0.0f,0.0f);
@@ -260,7 +260,7 @@ int main(int argc, char* argv[]) {
         shader.activate();
 
         for(int i=0; i < obstacles.size();i++){
-            obstacles[i]->update_position();
+            obstacles[i]->update_position(player.pos.z + 3.0f);
         }
 
         player.update_player(dt, objects);
