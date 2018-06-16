@@ -3,3 +3,4 @@ bin/Debug/fcg.dSYM
 cmake-build-debug
 bin/Debug
 .DS_Store
+*.layout

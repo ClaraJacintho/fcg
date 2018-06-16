@@ -175,8 +175,8 @@ int main(int argc, char* argv[]) {
     Object plane(3,3, "plane","../../data/plane.obj");
     ComputeNormals(&(plane.model));
     BuildTrianglesAndAddToVirtualScene(&plane);
-    plane.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
     plane.setRotation(glm::vec3(90.0f,00.0f,0.0f));
+    plane.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
     objects.push_back(&plane);
     planes.push_back(&plane);
 
@@ -191,16 +191,16 @@ int main(int argc, char* argv[]) {
     Object plane3(3,3, "plane","../../data/plane.obj");
     ComputeNormals(&(plane.model));
     BuildTrianglesAndAddToVirtualScene(&plane3);
-    plane3.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
     plane3.setRotation(glm::vec3(90.0f,00.0f,0.0f));
+    plane3.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
     objects.push_back(&plane3);
     planes.push_back(&plane3);
 
     Object plane4(3,3, "plane","../../data/plane.obj");
     ComputeNormals(&(plane.model));
     BuildTrianglesAndAddToVirtualScene(&plane4);
-    plane4.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
     plane4.setRotation(glm::vec3(90.0f,0.0f,0.0f));
+    plane4.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
     objects.push_back(&plane4);
     planes.push_back(&plane4);
 
@@ -208,8 +208,8 @@ int main(int argc, char* argv[]) {
     Object plane5(3,3, "plane","../../data/plane.obj");
     ComputeNormals(&(plane.model));
     BuildTrianglesAndAddToVirtualScene(&plane5);
-    plane5.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
     plane5.setRotation(glm::vec3(90.0f,0.0f,0.0f));
+    plane5.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
     objects.push_back(&plane5);
     planes.push_back(&plane5);
 
@@ -395,8 +395,8 @@ int main(int argc, char* argv[]) {
             glm::vec4 pos4(player.pos.x, player.pos.y, player.pos.z, 0.0f);
             glm::vec4 bbmin4(player.bbox_min.x, player.bbox_min.y, player.bbox_min.z, 0.0f);
             glm::vec4 bbmax4(player.bbox_max.x, player.bbox_max.y, player.bbox_max.z, 0.0f);
-
-//            TextRendering_PrintVector(window, pos4, 0, 0);
+//
+            TextRendering_PrintVector(window, pos4, 0, 0);
 //            TextRendering_PrintVector(window, bbmax4, -0.9, 0);
 //            TextRendering_PrintVector(window, bbmin4, -0.9, 0.9);
 
@@ -522,7 +522,7 @@ void randomize_position(vector<Object *> planes){
         float x = MIN + (rand() % (MAX +1) + MIN);
         cout << x; cout << " ";
         float y = MIN + (rand() % (MAX +1) + MIN);
-        cout << y;cout << " ";
+        cout << y; cout << " ";
         float z = -i*5 - 2/*MIN + (rand() % (MAX +1) + MIN)*/;
         cout << z << endl;
 

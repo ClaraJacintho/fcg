@@ -217,6 +217,7 @@ public:
 
         bool checkCollisionPlane(Object* obj){
             //https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
+
             glm::vec3 half_extents = this->bbox_max - this->pos;
             glm::vec3 half_extents_plane = obj->bbox_max - obj->pos;
 
@@ -230,13 +231,21 @@ public:
                 p2 = p1 - glm::vec3(0.0f,2*half_extents_plane.y, 0.0f);
             }
 
+
             glm::vec3 plane_normal = cross((obj->pos - p2),(obj->pos - p1));
             plane_normal = glm::normalize(plane_normal); //If you dont do this, it works for specific cases
+//            plane_normal.z = -plane_normal.z;
 
-            float projection =  half_extents.x * abs(plane_normal .x) + half_extents.y * abs(plane_normal .y) + half_extents.z * abs(plane_normal .z);
-            float plane_d = glm::length((obj->pos)-glm::vec3(0.0f,0.0f,0.0f));
+            glm::vec3 pos_invz = this->pos;
+            pos_invz.z = -pos_invz.z;
 
-            float distance = glm::dot(this->pos,(plane_normal)) - plane_d;
+            float projection =  half_extents.x * abs(plane_normal.x) +
+                                half_extents.y * abs(plane_normal.y) +
+                                half_extents.z * abs(plane_normal.z);
+
+            float plane_d = glm::length(glm::vec3(0.0f,0.0f,0.0f) - (obj->pos));
+
+            float distance = glm::dot(pos_invz,(plane_normal)) - plane_d;
 //            cout << "distance: ";
 //            cout << distance << endl;
 //            cout << "Proj: ";
@@ -252,6 +261,10 @@ public:
                 return true;
             }
             return false;
+
+        }
+
+        void checkCollisionPlaneBrute(Object* obj) {
 
         }
 
