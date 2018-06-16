@@ -318,4 +318,4 @@ add_executable(fcg
         src/stb_image.cpp
         src/textrendering.cpp
         src/tiny_obj_loader.cpp include/Shader.h include/Skybox.h include/Camera.h include/Tunnel.h include/Sphere.h
-        src/Sphere.cpp)
+        src/Sphere.cpp include/Obstacle.h)

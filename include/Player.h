@@ -5,6 +5,7 @@
 #include "Sphere.h"
 #include <glm/common.hpp>
 #include <glm/geometric.hpp>
+#include <vector>
 #define SPEED_INCREMENT 1.0f
 #define MAX_SPEED 12.0f
 #define ACCELERATION 2.0f
@@ -125,8 +126,8 @@ public:
                         checkCollisionSphere((Sphere *) obj);
                         break;
                     case PLANE:
-                        checkCollisionPlane(obj);
-                        break;
+//                        checkCollisionPlane(obj);
+//                        break;
                     case AABB:
                         checkCollisionAABB(obj);
                         break;
@@ -160,7 +161,7 @@ public:
         }
 
         if(col_x && col_y && col_z){
-            //obj->destroyed = true;
+            this->destroyed = true;
             printf("boom %s\n", obj->name.c_str());
             //return true;
         }
@@ -181,13 +182,14 @@ public:
             difference = closest - obj->pos;
 
             if(glm::length(difference) < obj->radius ){ //I have no idea how to make this work tbh
-               //obj->destroyed = true;
+               this->destroyed = true;
                 cout << "sphere boom" << endl;
             }
 
         }
 
         void checkCollisionPlane(Object* obj){
+            //https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
             glm::vec3 half_extents = this->bbox_max - this->pos;
             glm::vec3 half_extents_plane = obj->bbox_max - obj->pos;
 
@@ -202,18 +204,27 @@ public:
             }
 
             glm::vec3 plane_normal = cross((obj->pos - p2),(obj->pos - p1));
-            //https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
-            float projection =  half_extents.x * abs(plane_normal.x) +half_extents.y * abs(plane_normal.y) + half_extents.z * abs(plane_normal.z);
+            plane_normal = glm::normalize(plane_normal);
 
+            float projection =  half_extents.x * abs(plane_normal .x) + half_extents.y * abs(plane_normal .y) + half_extents.z * abs(plane_normal .z);
             float plane_d = glm::length((obj->pos)-glm::vec3(0.0f,0.0f,0.0f));
-            float distance = dot((this->pos - obj->pos),(plane_normal)) - plane_d;
+
+            float distance = glm::dot(this->pos,(plane_normal)) - plane_d;
+            cout << "distance: ";
+            cout << distance << endl;
+            cout << "Proj: ";
+            cout << projection << endl;
+            cout << "dot: ";
+            cout << glm::dot(this->pos ,(plane_normal))- plane_d << endl;
+            cout << "d: ";
+            cout << plane_d <<endl;
 
             if(abs(distance) < projection){
-                cout << "plane boom" <<endl;
+
+                 cout << "plane boom" <<endl;
             }
 
         }
-
 
         void /*gambiarra*/ fix_bbox(){
             float aux = this->bbox_min.x;

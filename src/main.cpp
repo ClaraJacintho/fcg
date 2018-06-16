@@ -11,7 +11,6 @@
 //                 Vinicius Chagas
 //
 
-
 #include <iostream>
 #include <Shader.h>
 #include <Skybox.h>
@@ -25,8 +24,16 @@
 #include "Player.h"
 #include "Shader.h"
 #include "Sphere.h"
+#include "Obstacle.h"
 
 
+#define MIN 0
+#define MAX 3
+#define PLANE_HEIGHT 0.5
+#define PLANE_WIDTH  0.7
+#define OBSTACLE_SPEED 0.03
+
+void randomize_position(vector<Object *> planes);
 Player player;
 double dt = 0.0f;
 double lastFrame = 0.0f;
@@ -108,6 +115,8 @@ int main(int argc, char* argv[]) {
     Skybox skybox("../../data/mp_jasper");  //não funciona ainda
 
     vector<Object*> objects;
+    vector<Object*> planes;
+    vector<Obstacle*> obstacles;
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ComputeNormals(&(player.model));
@@ -124,45 +133,96 @@ int main(int argc, char* argv[]) {
     ComputeNormals(&(sphere.model));
     BuildTrianglesAndAddToVirtualScene(&sphere);
     sphere.setScale(1.0f);
-    sphere.setPos(glm::vec3(1.0f,1.0f,-1.0f));
+    sphere.setPos(glm::vec3(1.0f,1.0f,-2.0f));
     objects.push_back(&sphere);
+    Obstacle s(&sphere);
+    s.movement = glm::vec3(OBSTACLE_SPEED,0.0f,0.0f);
+    obstacles.push_back(&s);
+    sphere.printBBox();
+
+    Sphere sphere2("sphere","../../data/sphere.obj");
+    ComputeNormals(&(sphere2.model));
+    BuildTrianglesAndAddToVirtualScene(&sphere2);
+    sphere2.setScale(1.0f);
+    sphere2.setPos(glm::vec3(1.0f,2.0f,-2.0f));
+    objects.push_back(&sphere2);
+    Obstacle s2(&sphere2);
+    s2.movement = glm::vec3(-OBSTACLE_SPEED,0.0f,0.0f);
+    obstacles.push_back(&s2);
     sphere.printBBox();
 
     Tunnel tunnel;
 
-    Object plane(3, "plane","../../data/plane.obj");
-    ComputeNormals(&(plane.model));
-    BuildTrianglesAndAddToVirtualScene(&plane);
-    plane.setScale(glm::vec3(2.0f,2.0f,2.0f));
-    plane.setPos(glm::vec3(0.0f, -2.0f, 0.0f));
-    objects.push_back(&plane);
-    plane.printBBox();
 
     Object cow(2, "cow", "../../data/cow.obj");
     ComputeNormals(&(cow.model));
     BuildTrianglesAndAddToVirtualScene(&cow);
     cow.setScale(glm::vec3(0.2f,0.2f,0.2f));
     cow.setPos(glm::vec3(0.0f,0.5f,0.0f));
-    objects.push_back(&cow);
+   // objects.push_back(&cow);
     cow.printBBox();
+
+    Object plane(3, "plane","../../data/plane.obj");
+    ComputeNormals(&(plane.model));
+    BuildTrianglesAndAddToVirtualScene(&plane);
+    plane.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
+    plane.setRotation(glm::vec3(90.0f,00.0f,0.0f));
+    objects.push_back(&plane);
+    planes.push_back(&plane);
 
     Object plane2(3, "plane","../../data/plane.obj");
     ComputeNormals(&(plane2.model));
     BuildTrianglesAndAddToVirtualScene(&plane2);
-    plane2.setRotation(glm::vec3(0.0f,0.0f,90.0f));
-    plane2.setScale(glm::vec3(2.0f,2.0f,2.0f));
-    plane2.setPos(glm::vec3(2.0f, 0.0f, 0.0f));
+    plane2.setRotation(glm::vec3(90.0f,0.0f,0.0f));
+    plane2.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
     objects.push_back(&plane2);
-    plane2.printBBox();
+    planes.push_back(&plane2);
+
+    Object plane3(3, "plane","../../data/plane.obj");
+    ComputeNormals(&(plane.model));
+    BuildTrianglesAndAddToVirtualScene(&plane3);
+    plane3.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
+    plane3.setRotation(glm::vec3(90.0f,00.0f,0.0f));
+    objects.push_back(&plane3);
+    planes.push_back(&plane3);
+
+    Object plane4(3, "plane","../../data/plane.obj");
+    ComputeNormals(&(plane.model));
+    BuildTrianglesAndAddToVirtualScene(&plane4);
+    plane4.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
+    plane4.setRotation(glm::vec3(90.0f,0.0f,0.0f));
+    objects.push_back(&plane4);
+    planes.push_back(&plane4);
 
 
-//    Object plane2(3, "plane-lt","../../data/plane.obj");
-//    plane2.setPos(glm::vec3(0.0f, 0.0f, 2.0f));
-//    plane2.setScale(glm::vec3(4.0f,4.0f,4.0f));
-//    plane2.setRotation(glm::vec3(0.0f,0.0f,-90.0f));
+    Object plane5(3, "plane","../../data/plane.obj");
+    ComputeNormals(&(plane.model));
+    BuildTrianglesAndAddToVirtualScene(&plane5);
+    plane5.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
+    plane5.setRotation(glm::vec3(90.0f,0.0f,0.0f));
+    objects.push_back(&plane5);
+    planes.push_back(&plane5);
+
+//    Object plane(3, "plane","../../data/plane.obj");
+//    ComputeNormals(&(plane.model));
+//    BuildTrianglesAndAddToVirtualScene(&plane);
+//    plane.setScale(glm::vec3(2.0f,2.0f,2.0f));
+//    plane.setPos(glm::vec3(0.0f, -2.0f, 0.0f));
+//    objects.push_back(&plane);
+//    plane.printBBox();
+//
+//    Object plane2(3, "plane","../../data/plane.obj");
 //    ComputeNormals(&(plane2.model));
 //    BuildTrianglesAndAddToVirtualScene(&plane2);
+//    plane2.setRotation(glm::vec3(0.0f,0.0f,90.0f));
+//    plane2.setScale(glm::vec3(2.0f,2.0f,2.0f));
+//    plane2.setPos(glm::vec3(2.0f, 0.0f, 0.0f));
 //    objects.push_back(&plane2);
+//    plane2.printBBox();
+
+
+    randomize_position(planes);
+
 
     // Inicializamos o código para renderização de texto.
     TextRendering_Init();
@@ -185,39 +245,45 @@ int main(int argc, char* argv[]) {
 
     // Ficamos em loop, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window)) {
+
         double curTime = glfwGetTime();
         dt = curTime - lastFrame;
         lastFrame = curTime;
 
         // Definimos a cor do "fundo" do framebuffer como branco.
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        // https://www.tug.org/pracjourn/2007-4/walden/color.pdf
+        glClearColor(0.2f, 0.2f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Pedimos para a GPU utilizar o programa de GPU criado acima (contendo
         // os shaders de vértice e fragmentos).
         shader.activate();
 
+        for(int i=0; i < obstacles.size();i++){
+            obstacles[i]->update_position();
+        }
+
         player.update_player(dt, objects);
 
         // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
-        glm::vec4 camera_position_c  = glm::vec4(player.pos.x,player.pos.y+2.0f,player.pos.z+3.0f,1.0f);
-        glm::vec4 camera_lookat_l    = glm::vec4(player.pos.x,player.pos.y,player.pos.z,1.0f);
+        glm::vec4 camera_position_c = glm::vec4(player.pos.x, player.pos.y + 2.0f, player.pos.z + 3.0f, 1.0f);
+        glm::vec4 camera_lookat_l = glm::vec4(player.pos.x, player.pos.y, player.pos.z, 1.0f);
         glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c;
-        glm::vec4 camera_up_vector   = glm::vec4(0.0f,1.0f,0.0f,0.0f);
+        glm::vec4 camera_up_vector = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 
         glm::mat4 view = Matrix_Camera_View(camera_position_c, camera_view_vector, camera_up_vector);
         glm::mat4 projection;
 
         float nearplane = -0.1f;
-        float farplane  = -100.0f;
+        float farplane = -100.0f;
 
         if (g_UsePerspectiveProjection) {
             float field_of_view = M_PI / 3.0f;
             projection = Matrix_Perspective(field_of_view, g_ScreenRatio, nearplane, farplane);
         } else {
-            float t = 1.5f*g_CameraDistance/2.5f;
+            float t = 1.5f * g_CameraDistance / 2.5f;
             float b = -t;
-            float r = t*g_ScreenRatio;
+            float r = t * g_ScreenRatio;
             float l = -r;
             projection = Matrix_Orthographic(l, r, b, t, nearplane, farplane);
         }
@@ -227,44 +293,52 @@ int main(int argc, char* argv[]) {
         shader.passValue("view", view);
         shader.passValue("projection", projection);
 
-        for(int i = 0; i < number_of_objects; i++){
-            if(objects[i]->destroyed == false){
-                model = Matrix_Translate(objects[i]->pos.x,objects[i]->pos.y,objects[i]->pos.z)
-                    * Matrix_Scale(objects[i]->scale.x,objects[i]->scale.y,objects[i]->scale.z)
-                    * Matrix_Rotate_X(objects[i]->rad.x)
-                    * Matrix_Rotate_Y(objects[i]->rad.y)
-                    * Matrix_Rotate_Z(objects[i]->rad.z);
-                shader.passValue("model", model);
-                shader.passValue("object_id", objects[i]->obj_type);
-                DrawVirtualObject(objects[i]->name.c_str());
+        if(player.destroyed == false) {
+
+            for (int i = 0; i < number_of_objects; i++) {
+                if (objects[i]->destroyed == false) {
+                    model = Matrix_Translate(objects[i]->pos.x, objects[i]->pos.y, objects[i]->pos.z)
+                            * Matrix_Scale(objects[i]->scale.x, objects[i]->scale.y, objects[i]->scale.z)
+                            * Matrix_Rotate_X(objects[i]->rad.x)
+                            * Matrix_Rotate_Y(objects[i]->rad.y)
+                            * Matrix_Rotate_Z(objects[i]->rad.z);
+                    shader.passValue("model", model);
+                    shader.passValue("object_id", objects[i]->obj_type);
+                    DrawVirtualObject(objects[i]->name.c_str());
+                }
             }
+            tunnel.draw(tunnel_shd);
+
+            /*glDepthFunc(GL_LEQUAL);
+            skybox.shader.activate();
+            skybox.shader.passValue("view", glm::mat4(glm::mat3(view)));
+            skybox.shader.passValue("projection", projection);
+            glBindVertexArray(skybox.VAO);
+            glActiveTexture(GL_TEXTURE0 + 128);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.texture_map);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+            //glBindVertexArray(0);
+            glDepthFunc(GL_LESS);
+            skybox.shader.deactivate();*/
+
+            TextRendering_ShowFramesPerSecond(window);
+
+            glm::vec4 pos4(player.pos.x, player.pos.y, player.pos.z, 0.0f);
+            glm::vec4 bbmin4(player.bbox_min.x, player.bbox_min.y, player.bbox_min.z, 0.0f);
+            glm::vec4 bbmax4(player.bbox_max.x, player.bbox_max.y, player.bbox_max.z, 0.0f);
+
+            TextRendering_PrintVector(window, pos4, 0, 0);
+            TextRendering_PrintVector(window, bbmax4, -0.9, 0);
+            TextRendering_PrintVector(window, bbmin4, -0.9, 0.9);
+
+            //TextRendering_PrintString(window, "Elle est pas belle, la vie?", -0.9, 0.9);
+
+        }
+        else{
+            TextRendering_PrintString(window, "GAME OVER!", 0, 0);
         }
 
         shader.deactivate();
-
-        tunnel.draw(tunnel_shd);
-
-        /*glDepthFunc(GL_LEQUAL);
-        skybox.shader.activate();
-        skybox.shader.passValue("view", glm::mat4(glm::mat3(view)));
-        skybox.shader.passValue("projection", projection);
-        glBindVertexArray(skybox.VAO);
-        glActiveTexture(GL_TEXTURE0 + 128);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.texture_map);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        //glBindVertexArray(0);
-        glDepthFunc(GL_LESS);
-        skybox.shader.deactivate();*/
-
-        TextRendering_ShowFramesPerSecond(window);
-
-        glm::vec4 pos4(player.pos.x,player.pos.y,player.pos.z,0.0f);
-        glm::vec4 bbmin4(player.bbox_min.x,player.bbox_min.y,player.bbox_min.z,0.0f);
-        glm::vec4 bbmax4(player.bbox_max.x,player.bbox_max.y,player.bbox_max.z,0.0f);
-
-        TextRendering_PrintVector(window,pos4,0,0);
-        TextRendering_PrintVector(window,bbmax4,-0.9,0);
-        TextRendering_PrintVector(window,bbmin4,-0.9,0.9);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -354,6 +428,21 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
     if (key == GLFW_KEY_S && action == GLFW_RELEASE){
         player.move(glm::vec3(0.0f,0.0f,0.0f));
     }
-
-
 }
+
+void randomize_position(vector<Object *> planes){
+    for (int i = 0; i < planes.size(); ++i) {
+        float x = MIN + (rand() % (MAX +1) + MIN);
+        cout << x; cout << " ";
+        float y = MIN + (rand() % (MAX +1) + MIN);
+        cout << y;cout << " ";
+        float z = -i*5 - 2/*MIN + (rand() % (MAX +1) + MIN)*/;
+        cout << z << endl;
+
+        planes[i]->setPos(glm::vec3(x,y,z));
+        planes[i]->printBBox();
+        //plane.setPos(glm::vec3(0.0f, -2.0f, 0.0f));
+    }
+}
+
+
