@@ -121,7 +121,7 @@ public:
     void checkCollision(vector<Object *> vect){
         for(auto const obj : vect){
             if(obj->name != this->name){
-                switch (obj->obj_type) {
+                switch (obj->hitbox_type) {
                     case SPHERE:
                         checkCollisionSphere((Sphere *) obj);
                         break;
@@ -161,7 +161,7 @@ public:
         }
 
         if(col_x && col_y && col_z){
-            this->destroyed = true;
+           obj->destroyed = true;
             printf("boom %s\n", obj->name.c_str());
             //return true;
         }

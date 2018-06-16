@@ -9,6 +9,12 @@
 #include <glad/glad.h>
 #include "matrices.h"
 
+#define EARTH 1
+#define JET 2
+#define PLANE  3
+#define MARS 4
+#define COW 5
+
 #define SPHERE 1
 #define AABB 2
 #define PLANE 3
@@ -54,12 +60,10 @@ public:
     glm::vec3 bbox_min;
     glm::vec3 bbox_max;
     int obj_type;
+    int hitbox_type;
 
-    Object(int obj_type, string name, const char *file_name, const char *mtl_basepath = nullptr)
+    Object(int hitbox_type, int obj_type, string name, const char *file_name, const char *mtl_basepath = nullptr)
             : model(file_name, mtl_basepath, true) {
-        ///TO DO: Actually call this functions here instead of in main
-        ///ComputeNormals(&(this->model));
-        ///BuildTrianglesAndAddToVirtualScene(&(this->model));
 
         this->name      = name;
         this->scale     = glm::vec3(1.0f,1.0f,1.0f);
@@ -67,20 +71,19 @@ public:
         this->rad       = glm::vec3(0.0f,0.0f,0.0f);
         this->destroyed = false;
         this->obj_type  = obj_type;
+        this->hitbox_type = hitbox_type;
     }
 
     Object(string name, const char *file_name, const char *mtl_basepath = nullptr)
             : model(file_name, mtl_basepath, true) {
-        ///TO DO: Actually call this functions here instead of in main
-        ///ComputeNormals(&(this->model));
-        ///BuildTrianglesAndAddToVirtualScene(&(this->model));
 
         this->name      = name;
         this->scale     = glm::vec3(1.0f,1.0f,1.0f);
         this->pos       = glm::vec3(0.0f,0.0f,0.0f);
         this->rad       = glm::vec3(0.0f,0.0f,0.0f);
         this->destroyed = false;
-        this->obj_type  = AABB;
+        this->hitbox_type = AABB;
+        this->obj_type  = JET;
     }
 
     void setPos(glm::vec3 pos_v){
@@ -155,44 +158,6 @@ public:
                   << std::endl;
     }
 
-    void drawAxisAlignedBoundingBox() {
-        glPushAttrib(GL_LIGHTING_BIT);
-
-        glEnable(GL_COLOR_MATERIAL);
-        glDisable(GL_LIGHTING);
-
-        glColor3f(0.0f, 0.0f, 0.0f);
-
-        glBegin(GL_LINE_LOOP);
-        glVertex3f(bbox_min.x, bbox_max.y, bbox_max.z);
-        glVertex3f(bbox_min.x, bbox_min.y, bbox_max.z);
-        glVertex3f(bbox_max.x, bbox_min.y, bbox_max.z);
-        glVertex3f(bbox_max.x, bbox_max.y, bbox_max.z);
-        glEnd();
-
-        glBegin(GL_LINE_LOOP);
-        glVertex3f(bbox_max.x, bbox_max.y, bbox_min.z);
-        glVertex3f(bbox_min.x, bbox_max.y, bbox_min.z);
-        glVertex3f(bbox_min.x, bbox_min.y, bbox_min.z);
-        glVertex3f(bbox_max.x, bbox_min.y, bbox_min.z);
-        glEnd();
-
-        glBegin(GL_LINE_LOOP);
-        glVertex3f(bbox_min.x, bbox_max.y, bbox_max.z);
-        glVertex3f(bbox_min.x, bbox_max.y, bbox_min.z);
-        glVertex3f(bbox_min.x, bbox_min.y, bbox_min.z);
-        glVertex3f(bbox_min.x, bbox_min.y, bbox_max.z);
-        glEnd();
-
-        glBegin(GL_LINE_LOOP);
-        glVertex3f(bbox_max.x, bbox_max.y, bbox_min.z);
-        glVertex3f(bbox_max.x, bbox_min.y, bbox_min.z);
-        glVertex3f(bbox_max.x, bbox_min.y, bbox_max.z);
-        glVertex3f(bbox_max.x, bbox_max.y, bbox_max.z);
-        glEnd();
-
-        glPopAttrib();
-    }
 };
 
 

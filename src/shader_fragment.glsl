@@ -19,9 +19,11 @@ uniform mat4 view;
 uniform mat4 projection;
 
 // Identificador que define qual objeto est� sendo desenhado no momento
-#define SPHERE 1
-#define AABB 2
+#define EARTH 1
+#define JET 2
 #define PLANE  3
+#define MARS 4
+#define COW 5
 uniform int object_id;
 
 // Par�metros da axis-aligned bounding box (AABB) do modelo
@@ -73,10 +75,13 @@ void main()
     vec3 Kd;
     vec3 Ks;
     vec3 Ka;
+    float q;
 
+    vec4 r = (l*-1) + (2*n)*(dot(n,l));
     vec3 Ia = vec3(0.5f,0.5f,0.5f);
+    vec3 I = vec3(1.0,1.0,1.0);
 
-    if ( object_id == SPHERE )
+    if ( object_id == EARTH )
     {
         vec4 bbox_center = (bbox_min + bbox_max) / 2.0;
 
@@ -92,11 +97,11 @@ void main()
         Ks = vec3(0.5, 0.5, 0.7);
         Ka = Kd;
 
-        vec3 diffuse = Kd * vec3(10.0, 10.0, 10.0) * lambert + 0.01;
+        vec3 diffuse = Kd *I * lambert + 0.01;
         vec3 ambient = Ka * Ia;
         color = diffuse + ambient;
     }
-    else if ( object_id == AABB )
+    else if ( object_id == JET )
     {
         float minx = bbox_min.x;
         float maxx = bbox_max.x;
@@ -114,11 +119,36 @@ void main()
     }
     else if ( object_id == PLANE )
     {
-        // Coordenadas de textura do plano, obtidas do arquivo OBJ.
-        U = texcoords.x;
-        V = texcoords.y;
-        Kd = texture(TextureImage0, vec2(U,V)).rgb;
-        color = Kd * (lambert + 0.01);
+        Kd = vec3(0.8,0.4,0.08);
+        Ks = vec3(0.0,0.0,0.0);
+        Ka = vec3(0.4,0.2,0.04);
+        q = 1.0;
+
+        vec3 diffuse = Kd * (lambert + 0.01);
+        vec3 ambient = Ka * Ia;
+        vec3 phong =  Ks*I*(pow(max(0,dot(r,v)),q));
+
+        color = diffuse + ambient + phong;
+    }
+    else if ( object_id == MARS ){
+           Kd = vec3(0.8,0.4,0.08);
+            Ks = vec3(0.0,0.0,0.0);
+            Ka = vec3(0.4,0.2,0.04);
+            q = 1.0;
+            vec3 diffuse = Kd * (lambert + 0.01);
+            vec3 ambient = Ka * Ia;
+            vec3 phong =  Ks*I*(pow(max(0,dot(r,v)),q));
+            color = diffuse + ambient + phong;
+    }
+    else if ( object_id == COW ){
+          Kd = vec3(0.08,0.4,0.8);
+          Ks = vec3(0.8,0.8,0.8);
+          Ka = vec3(0.04,0.2,0.4);
+          q = 32.0;
+          vec3 diffuse = Kd * (lambert + 0.01);
+          vec3 ambient = Ka * Ia;
+          vec3 phong =  Ks*I*(pow(max(0,dot(r,v)),q));
+          color = diffuse + ambient + phong;
     }
     //color = Kd0 * (lambert + 0.01);
 

@@ -130,7 +130,7 @@ int main(int argc, char* argv[]) {
     objects.push_back(&player);
     player.printBBox();
 
-    Sphere sphere("sphere","../../data/sphere.obj");
+    Sphere sphere(1,"sphere","../../data/sphere.obj");
     ComputeNormals(&(sphere.model));
     BuildTrianglesAndAddToVirtualScene(&sphere);
     sphere.setScale(1.0f);
@@ -141,7 +141,7 @@ int main(int argc, char* argv[]) {
     obstacles.push_back(&s);
     sphere.printBBox();
 
-    Sphere sphere2("sphere","../../data/sphere.obj");
+    Sphere sphere2(4,"sphere","../../data/sphere.obj");
     ComputeNormals(&(sphere2.model));
     BuildTrianglesAndAddToVirtualScene(&sphere2);
     sphere2.setScale(1.0f);
@@ -155,15 +155,15 @@ int main(int argc, char* argv[]) {
     Tunnel tunnel;
 
 
-    Object cow(2, "cow", "../../data/cow.obj");
+    Object cow(2,5, "cow", "../../data/cow.obj");
     ComputeNormals(&(cow.model));
     BuildTrianglesAndAddToVirtualScene(&cow);
-    cow.setScale(glm::vec3(0.2f,0.2f,0.2f));
-    cow.setPos(glm::vec3(0.0f,0.5f,0.0f));
-   // objects.push_back(&cow);
+    cow.setScale(glm::vec3(1,1,1));
+    cow.setPos(glm::vec3(0.0f,0.5f,-2));
+     objects.push_back(&cow);
     cow.printBBox();
 
-    Object plane(3, "plane","../../data/plane.obj");
+    Object plane(3,3, "plane","../../data/plane.obj");
     ComputeNormals(&(plane.model));
     BuildTrianglesAndAddToVirtualScene(&plane);
     plane.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
@@ -171,7 +171,7 @@ int main(int argc, char* argv[]) {
     objects.push_back(&plane);
     planes.push_back(&plane);
 
-    Object plane2(3, "plane","../../data/plane.obj");
+    Object plane2(3,3, "plane","../../data/plane.obj");
     ComputeNormals(&(plane2.model));
     BuildTrianglesAndAddToVirtualScene(&plane2);
     plane2.setRotation(glm::vec3(90.0f,0.0f,0.0f));
@@ -179,7 +179,7 @@ int main(int argc, char* argv[]) {
     objects.push_back(&plane2);
     planes.push_back(&plane2);
 
-    Object plane3(3, "plane","../../data/plane.obj");
+    Object plane3(3,3, "plane","../../data/plane.obj");
     ComputeNormals(&(plane.model));
     BuildTrianglesAndAddToVirtualScene(&plane3);
     plane3.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
@@ -187,7 +187,7 @@ int main(int argc, char* argv[]) {
     objects.push_back(&plane3);
     planes.push_back(&plane3);
 
-    Object plane4(3, "plane","../../data/plane.obj");
+    Object plane4(3,3, "plane","../../data/plane.obj");
     ComputeNormals(&(plane.model));
     BuildTrianglesAndAddToVirtualScene(&plane4);
     plane4.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
@@ -196,7 +196,7 @@ int main(int argc, char* argv[]) {
     planes.push_back(&plane4);
 
 
-    Object plane5(3, "plane","../../data/plane.obj");
+    Object plane5(3,3, "plane","../../data/plane.obj");
     ComputeNormals(&(plane.model));
     BuildTrianglesAndAddToVirtualScene(&plane5);
     plane5.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
@@ -204,7 +204,7 @@ int main(int argc, char* argv[]) {
     objects.push_back(&plane5);
     planes.push_back(&plane5);
 
-//    Object plane(3, "plane","../../data/plane.obj");
+//    Object plane(3,3, "plane","../../data/plane.obj");
 //    ComputeNormals(&(plane.model));
 //    BuildTrianglesAndAddToVirtualScene(&plane);
 //    plane.setScale(glm::vec3(2.0f,2.0f,2.0f));
@@ -212,7 +212,7 @@ int main(int argc, char* argv[]) {
 //    objects.push_back(&plane);
 //    plane.printBBox();
 //
-//    Object plane2(3, "plane","../../data/plane.obj");
+//    Object plane2(3,3, "plane","../../data/plane.obj");
 //    ComputeNormals(&(plane2.model));
 //    BuildTrianglesAndAddToVirtualScene(&plane2);
 //    plane2.setRotation(glm::vec3(0.0f,0.0f,90.0f));
