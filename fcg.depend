@@ -1118,7 +1118,7 @@
 	<inttypes.h>
 	<stdint.h>
 
-1529050079 source:c:\users\maria\desktop\fcg\src\main.cpp
+1529103834 source:c:\users\maria\desktop\fcg\src\main.cpp
 	<iostream>
 	<Shader.h>
 	<Skybox.h>
@@ -1640,7 +1640,7 @@
 	<fstream>
 	<sstream>
 
-1529057413 c:\users\maria\desktop\fcg\include\player.h
+1529113215 c:\users\maria\desktop\fcg\include\player.h
 	"Object.h"
 	"Sphere.h"
 	<glm/common.hpp>
@@ -2131,11 +2131,16 @@
 	"fcg_util.hpp"
 	"Shader.h"
 
-1529050260 c:\users\maria\desktop\fcg\include\sphere.h
+1529097112 c:\users\maria\desktop\fcg\include\sphere.h
 	"Object.h"
 
 1529050260 source:c:\users\maria\desktop\fcg\src\sphere.cpp
 
 1528243425 c:\users\maria\desktop\fcg\include\glm\common.hpp
 	"detail/func_common.hpp"
+
+1529102463 source:c:\users\maria\desktop\fcg\src\pane.cpp
+	"Pane.h"
+
+1529102463 c:\users\maria\desktop\fcg\include\pane.h
 

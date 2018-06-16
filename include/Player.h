@@ -196,75 +196,64 @@ public:
     }*/
 
     void checkCollisionSphere(Sphere* obj) {
-        /*glm::vec3 closest_point(
-            max(this->bbox_min.x, min(obj->pos.x, this->bbox_min.x)),
-            max(this->bbox_min.y, min(obj->pos.y, this->bbox_min.y)),
-            max(this->bbox_min.z, min(obj->pos.z, this->bbox_min.z))
-        );
+            //https://learnopengl.com/In-Practice/2D-Game/Collisions/Collision-detection
 
-        float distance =
-            (closest_point.x - obj->pos.x) * (closest_point.x - obj->pos.x) +
-            (closest_point.y - obj->pos.y) * (closest_point.y - obj->pos.y) +
-            (closest_point.z - obj->pos.z) * (closest_point.z - obj->pos.z);
+            glm::vec3 difference = obj->pos - this->pos;
 
-        if (distance < radius?)*/
-        //https://learnopengl.com/In-Practice/2D-Game/Collisions/Collision-detection
-
-        glm::vec3 difference = obj->pos - this->pos;
-        cout << "Diff" <<endl;
-        cout << difference.x <<endl;
-        cout << difference.y <<endl;
-        cout << difference.z <<endl;
-
-        glm::vec3 half_extents;
-        half_extents.x = (this->bbox_max.x - this->bbox_min.x) / 2;
-        half_extents.y = (this->bbox_max.y - this->bbox_min.y) / 2;
-        half_extents.z = (this->bbox_max.z - this->bbox_min.z) / 2;
-        cout << "Halves" <<endl;
-        cout << half_extents.x <<endl;
-        cout << half_extents.y <<endl;
-        cout << half_extents.z <<endl;
-
-        glm::vec3 clamped = glm::clamp(difference, -half_extents, half_extents);
-        cout << "Clamped" <<endl;
-        cout << clamped.x <<endl;
-        cout << clamped.y <<endl;
-        cout << clamped.z <<endl;
-
-        glm::vec3 closest = this->pos + clamped;
-        cout << "Closest" <<endl;
-        cout << closest.x <<endl;
-        cout << closest.y <<endl;
-        cout << closest.z <<endl;
-
-        difference = closest - obj->pos;
-        cout << "Differece" <<endl;
-        cout << difference.x <<endl;
-        cout << difference.y <<endl;
-        cout << difference.z <<endl;
-
-        cout << "Object pos" <<endl;
-        cout << obj->pos.x <<endl;
-        cout << obj->pos.y <<endl;
-        cout << obj->pos.z <<endl;
-
-        cout << "Object pos" <<endl;
-        cout << this->bbox_max.x <<endl;
-        cout << this->bbox_max.y <<endl;
-        cout << this->bbox_max.z <<endl;
-
-        cout << "Object pos" <<endl;
-        cout << this->bbox_min.x <<endl;
-        cout << this->bbox_min.y <<endl;
-        cout << this->bbox_min.z <<endl;
+            glm::vec3 half_extents = (this->bbox_max - this->pos) * this->scale;
 
 
+            glm::vec3 clamped = glm::clamp(difference, -half_extents, half_extents);
+            glm::vec3 closest = this->pos + clamped;
+            difference = closest - obj->pos;
 
-        /*if(glm::length(difference) < obj->radius){
-            cout << "Boom";
-        }*/
+            if(glm::length(difference) < obj->radius){
+                cout << "sphere boom";
+            }
 
-    }
+        }
+
+        void checkCollisionPlane(Object* obj){
+            //cout << "in plane";
+            glm::vec3 half_extents = (this->bbox_max - this->pos) * this->scale;
+
+            glm::vec3 half_extents_plane = obj->bbox_max  * obj->scale;
+            glm::vec3 p1 = (obj->bbox_max * obj->scale) + obj->pos;
+            glm::vec3 p2 = p1 - half_extents_plane; //this does not make sense, do not worry
+
+            glm::vec3 plane_normal = cross((obj->pos - p1),(obj->pos - p2));
+
+            float distance = dot((this->pos - obj->pos),(plane_normal));
+            distance -= half_extents.x;
+
+            cout << "distance" << endl;
+            cout << distance << endl;
+            cout << "normal" << endl;
+            cout << plane_normal.x << endl;
+            cout << plane_normal.y << endl;
+            cout << plane_normal.z << endl;
+            cout << "Object pos" <<endl;
+            cout << obj->pos.x <<endl;
+            cout << obj->pos.y <<endl;
+            cout << obj->pos.z <<endl;
+            cout << "p1" <<endl;
+            cout<< p1.x <<endl;
+            cout<< p1.y <<endl;
+            cout<< p1.z <<endl;
+            cout << "p2" <<endl;
+            cout<< p2.x <<endl;
+            cout<< p2.y <<endl;
+            cout<< p2.z <<endl;
+            cout << "Halves" <<endl;
+            cout << half_extents_plane.x <<endl;
+            cout << half_extents_plane.y <<endl;
+            cout << half_extents_plane.z <<endl;
+
+            if(distance < 0){
+             //   cout << "plane boom";
+            }
+
+        }
 protected:
 
 private:
