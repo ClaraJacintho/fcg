@@ -531,9 +531,14 @@ void initialize_position(vector<Object *> planes){
         cout << y; cout << " ";
         float z = -i*5 - 2/*MIN + (rand() % (MAX +1) + MIN)*/;
         cout << z << endl;
+        float bbox_ym = planes[i]->bbox_min.y;
 
+        planes[i]->bbox_min. y = planes[i]->bbox_max.y;
+        planes[i]->bbox_max.y = bbox_ym;
         planes[i]->setPos(glm::vec3(x,y,z));
+
         planes[i]->printBBox();
+
         //plane.setPos(glm::vec3(0.0f, -2.0f, 0.0f));
     }
 }
@@ -557,9 +562,9 @@ void update_plane(vector<Object *> planes, float camera_z){
     for (int i = 0; i < planes.size(); ++i) {
         if(planes[i]->pos.z > camera_z){
             // player.destroyed = true;
-            cout << "killer: ";
-            cout << i << endl; cout << " ";
-            cout << camera_z;
+//            cout << "killer: ";
+//            cout << i << endl; cout << " ";
+//            cout << camera_z;
         }
         if(planes[i]->destroyed){
             planes[i]->setPos(randomize_position(camera_z));

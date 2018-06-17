@@ -219,6 +219,7 @@ public:
         //https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
 
         glm::vec3 half_extents = this->bbox_max - this->pos;
+
         glm::vec3 half_extents_plane = obj->bbox_max - obj->pos;
 
         glm::vec3 p1 = obj->bbox_max;
@@ -246,27 +247,22 @@ public:
         float plane_d = glm::length(glm::vec3(0.0f,0.0f,0.0f) - (obj->pos));
 
         float distance = glm::dot(pos_invz,(plane_normal)) - plane_d;
-//            cout << "distance: ";
-//            cout << distance << endl;
-//            cout << "Proj: ";
-//            cout << projection << endl;
-//            cout << "dot: ";
-//            cout << glm::dot(this->pos ,(plane_normal))- plane_d << endl;
-//            cout << "d: ";
-//            cout << plane_d <<endl;
 
         if(abs(distance) < projection){
-            obj->destroyed = true;
-            cout << "plane boom" <<endl;
-            return true;
+            bool a = checkCollisionAABB(obj);
+            if(a == true) {
+                obj->destroyed = true;
+                cout << "plane boom" << endl;
+                return true;
+            }
+            obj->printBBox();
+           
         }
         return false;
 
     }
 
-    void checkCollisionPlaneBrute(Object* obj) {
 
-    }
 
     void /*gambiarra*/ fix_bbox(){
         float aux = this->bbox_min.x;
