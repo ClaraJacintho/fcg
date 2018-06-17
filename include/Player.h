@@ -22,17 +22,17 @@ public:
     double last_update;
     int lives;
     bool collision;
+    bool braking;
 
     Player() : Object("jet", "../../data/jet.obj")
     {
-        this->speed.x = 0;
-        this->speed.y = 0;
-        this->speed.z = 0;
+        this->speed = glm::vec3(0.0f);
         this->turned_x = false;
         this->turned_z = false;
         this->last_update = 0;
         this->lives = 3;
         this->collision = false;
+        this->braking = true;
         this->acceleration = glm::vec3(0.0f,0.0f,0.0f);
     }
 
@@ -40,15 +40,23 @@ public:
 
     void update(double dt, vector<Object *> objs){
         bool col = this->checkCollision(objs);
-        if(!col&&this->collision){
-            this->collision =false;
+
+        if(!col && this->collision){
+            this->collision = false;
             this->lives--;
             cout << "outch? ";
             cout << lives;
         }
-        this->speed.x += this->acceleration.x * dt;
-        this->speed.y += this->acceleration.y * dt;
-        this->speed.z += this->acceleration.z * dt;
+
+        if (braking){
+            this->speed.x = abs(speed.x) <= 0.1f ? 0.0f : this->speed.x - this->acceleration.x * dt;
+            this->speed.y = abs(speed.y) <= 0.1f ? 0.0f : this->speed.y - this->acceleration.y * dt;
+            this->speed.z = abs(speed.z) <= 0.1f ? 0.0f : this->speed.z - this->acceleration.z * dt;
+        } else {
+            this->speed.x += this->acceleration.x * dt;
+            this->speed.y += this->acceleration.y * dt;
+            this->speed.z += this->acceleration.z * dt;
+        }
 
         this->speed.x = (speed.x >= MAX_SPEED ? MAX_SPEED : speed.x);
         this->speed.y = (speed.y >= MAX_SPEED ? MAX_SPEED : speed.y);
@@ -58,11 +66,27 @@ public:
                          this->pos.y + this->speed.y * dt,
                          this->pos.z + this->speed.z * dt);
 
+//        if(newpos.x < -3.0f || newpos.x > 3.0f){
+//            newpos.x = glm::clamp(newpos.x, -3.0f, 3.0f);
+//            this->acceleration.x = 0.0f;
+//        }
+//
+//        if(newpos.y < -2.0f || newpos.y > 3.0f){
+//            newpos.y = glm::clamp(newpos.y, -5.0f, 5.0f);
+//            this->acceleration.y = 0.0f;
+//        }
+
         this->setPos(newpos);
     }
 
     void move(glm::vec3 direction) {
+        this->braking = false;
         this->acceleration = direction;
+    }
+
+    void brake() {
+        this->braking = true;
+//        this->acceleration = -this->acceleration;
     }
 
     void move_up() {
@@ -202,7 +226,7 @@ public:
         difference = closest - obj->pos;
 
         if(glm::length(difference) < obj->radius ){ //I have no idea how to make this work tbh
-           if(this->lives < 0){
+           if(this->lives <= 0){
                this->destroyed = true;
                cout << "RIP" << endl;
                return false;
@@ -217,6 +241,12 @@ public:
 
     bool checkCollisionPlane(Object* obj){
         //https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
+
+        glm::vec3 pos_invz = this->pos;
+        pos_invz.z = -pos_invz.z;
+
+        glm::vec3 bbmin_invy = this->pos;
+        bbmin_invy.y = -bbmin_invy.y;
 
         glm::vec3 half_extents = this->bbox_max - this->pos;
 
@@ -237,8 +267,7 @@ public:
         plane_normal = glm::normalize(plane_normal); //If you dont do this, it works for specific cases
 //            plane_normal.z = -plane_normal.z;
 
-        glm::vec3 pos_invz = this->pos;
-        pos_invz.z = -pos_invz.z;
+
 
         float projection =  half_extents.x * abs(plane_normal.x) +
                             half_extents.y * abs(plane_normal.y) +
@@ -246,7 +275,7 @@ public:
 
         float plane_d = glm::length(glm::vec3(0.0f,0.0f,0.0f) - (obj->pos));
 
-        float distance = glm::dot(pos_invz,(plane_normal)) - plane_d;
+        float distance = glm::dot(this->pos,(plane_normal)) - plane_d;
 
         if(abs(distance) < projection){
             bool a = checkCollisionAABB(obj);

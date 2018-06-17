@@ -40,6 +40,10 @@ public:
         glUniformMatrix4fv(glGetUniformLocation(shader_id, attrib.c_str()), 1, GL_FALSE, glm::value_ptr(value));
     }
 
+    void passValue(const std::string &attrib, glm::vec3 value) const {
+        glUniform3f(glGetUniformLocation(shader_id, attrib.c_str()), value.x, value.y, value.z);
+    }
+
     GLint getUniformLocation(const std::string &uniform) {
         return glGetUniformLocation(shader_id, uniform.c_str());
     }

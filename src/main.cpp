@@ -338,10 +338,11 @@ int main(int argc, char* argv[]) {
                             * Matrix_Rotate_Z(objects[i]->rad.z);
                     shader.passValue("model", model);
                     shader.passValue("object_id", objects[i]->obj_type);
+                    shader.passValue("lightPos", player.pos);
                     DrawVirtualObject(objects[i]->name.c_str());
                 }
             }
-            //TODO: Movimento dos obstaculos de acordo com o tempo nao frames! Que nem personagem!
+
             //tunnel.draw(tunnel_shd);
 
             // sun.setScale(glm::vec3(0.005f,0.005f,0.005f));
@@ -352,9 +353,9 @@ int main(int argc, char* argv[]) {
 
                 case 3:
                     PushMatrix(model);
-                        model = model * Matrix_Translate(player.pos.x  -4.0 ,player.pos.y-3.5f,player.pos.z);
+                        model = model * Matrix_Translate(player.pos.x  -3.75 ,player.pos.y-3.5f,player.pos.z);
                         PushMatrix(model);
-                            model = model *  Matrix_Scale(0.001f,0.001,0.001f);
+                            model = model *  Matrix_Scale(0.0025f,0.0025f,0.0025f);
                             shader.passValue("model", model);
                             shader.passValue("object_id", horse.obj_type);
                             DrawVirtualObject(horse.name.c_str());
@@ -362,9 +363,9 @@ int main(int argc, char* argv[]) {
                     PopMatrix(model);
                 case 2:
                     PushMatrix(model);
-                        model = model *  Matrix_Translate(player.pos.x  -3.5 ,player.pos.y-3.5f,player.pos.z);
+                        model = model *  Matrix_Translate(player.pos.x  -3.25 ,player.pos.y-3.5f,player.pos.z);
                         PushMatrix(model);
-                            model = model *  Matrix_Scale(0.001f,0.001,0.001f);
+                            model = model *  Matrix_Scale(0.0025f,0.0025f,0.0025f);
                             shader.passValue("model", model);
                             shader.passValue("object_id", horse.obj_type);
                             DrawVirtualObject(horse.name.c_str());
@@ -372,9 +373,9 @@ int main(int argc, char* argv[]) {
                     PopMatrix(model);
                 case 1:
                     PushMatrix(model);
-                        model = model *  Matrix_Translate(player.pos.x  -3.0 ,player.pos.y-3.5f,player.pos.z);
+                        model = model *  Matrix_Translate(player.pos.x  -2.75 ,player.pos.y-3.5f,player.pos.z);
                         PushMatrix(model);
-                            model = model *  Matrix_Scale(0.001f,0.001,0.001f);
+                            model = model *  Matrix_Scale(0.0025f,0.0025f,0.0025f);
                             shader.passValue("model", model);
                             shader.passValue("object_id", horse.obj_type);
                             DrawVirtualObject(horse.name.c_str());
@@ -473,34 +474,34 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         fflush(stdout);
     }
     if (key == GLFW_KEY_D  && action == GLFW_PRESS){
-       player.move(glm::vec3(1.0f,0.0f,0.0f));
+       player.move(glm::vec3(2.0f,0.0f,0.0f));
     }
     if (key == GLFW_KEY_A && action == GLFW_PRESS){
-        player.move(glm::vec3(-1.0f,0.0f,0.0f));
+        player.move(glm::vec3(-2.0f,0.0f,0.0f));
     }
     if (key == GLFW_KEY_W  && action == GLFW_PRESS){
-        player.move(glm::vec3(0.0f,1.0f,0.0f));
+        player.move(glm::vec3(0.0f,2.0f,0.0f));
     }
     if (key == GLFW_KEY_S && action == GLFW_PRESS){
-        player.move(glm::vec3(0.0f,-1.0f,0.0f));
+        player.move(glm::vec3(0.0f,-2.0f,0.0f));
     }
     if (key == GLFW_KEY_Q  && action == GLFW_PRESS){
-        player.move(glm::vec3(0.0f,0.0f,1.0f));
+        player.move(glm::vec3(0.0f,0.0f,2.0f));
     }
     if (key == GLFW_KEY_E && action == GLFW_PRESS){
-        player.move(glm::vec3(0.0f,0.0f,-1.0f));
+        player.move(glm::vec3(0.0f,0.0f,-2.0f));
     }
     if (key == GLFW_KEY_D  && action == GLFW_RELEASE){
-        player.move(glm::vec3(0.0f,0.0f,0.0f));
+        player.brake();
     }
     if (key == GLFW_KEY_A && action == GLFW_RELEASE){
-        player.move(glm::vec3(0.0f,0.0f,0.0f));
+        player.brake();
     }
     if (key == GLFW_KEY_W  && action == GLFW_RELEASE){
-        player.move(glm::vec3(0.0f,0.0f,0.0f));
+        player.brake();
     }
     if (key == GLFW_KEY_S && action == GLFW_RELEASE){
-        player.move(glm::vec3(0.0f,0.0f,0.0f));
+        player.brake();
     }
     if(key == GLFW_KEY_L && action == GLFW_PRESS){
         free_camera = !free_camera;

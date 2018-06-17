@@ -13,6 +13,9 @@ in vec4 position_model;
 // Coordenadas de textura obtidas do arquivo OBJ (se existirem!)
 in vec2 texcoords;
 
+// gouraud shading, calculado no vertex shader
+in vec3 gouraud_color;
+
 // Matrizes computadas no c�digo C++ e enviadas para a GPU
 uniform mat4 model;
 uniform mat4 view;
@@ -142,13 +145,14 @@ void main()
     }
     else if ( object_id == COW ){
           Kd = vec3(0.08,0.4,0.8);
-          Ks = vec3(0.8,0.8,0.8);
-          Ka = vec3(0.04,0.2,0.4);
-          q = 32.0;
-          vec3 diffuse = Kd * (lambert + 0.01);
-          vec3 ambient = Ka * Ia;
-          vec3 phong =  Ks*I*(pow(max(0,dot(r,v)),q));
-          color = diffuse + ambient + phong;
+//          Ks = vec3(0.8,0.8,0.8);
+//          Ka = vec3(0.04,0.2,0.4);
+//          q = 32.0;
+//          vec3 diffuse = Kd * (lambert + 0.01);
+//          vec3 ambient = Ka * Ia;
+//          vec3 phong =  Ks*I*(pow(max(0,dot(r,v)),q));
+//          color = diffuse + ambient + phong;
+          color = gouraud_color * Kd;
     }
     else if ( object_id == SUN ){
           Kd = vec3(0.08,0.4,0.8);

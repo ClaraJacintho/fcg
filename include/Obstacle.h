@@ -27,6 +27,11 @@ class Obstacle {
             pos.y += this->movement.y * dt * 25;
             pos.z += this->movement.z * dt * 25;
 
+            glm::vec3 rotation(0.0f,sin(glfwGetTime()) * 180 / M_PI,0.0f);
+            rotation.y *= dt;
+
+            this->obj->setRotation(rotation);
+
             if(abs(pos.x) > RANGE || abs(pos.y) > RANGE){
                 this->movement.x = this->movement.x * -1;
                 this->movement.y = this->movement.y * -1;
