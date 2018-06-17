@@ -476,34 +476,39 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         fflush(stdout);
     }
     if (key == GLFW_KEY_D  && action == GLFW_PRESS){
-       player.move(glm::vec3(2.0f,0.0f,0.0f));
+       player.move(glm::vec3(5.0f,0.0f,0.0f));
     }
     if (key == GLFW_KEY_A && action == GLFW_PRESS){
-        player.move(glm::vec3(-2.0f,0.0f,0.0f));
+        player.move(glm::vec3(-5.0f,0.0f,0.0f));
     }
     if (key == GLFW_KEY_W  && action == GLFW_PRESS){
-        player.move(glm::vec3(0.0f,2.0f,0.0f));
+        player.move(glm::vec3(0.0f,5.0f,0.0f));
     }
     if (key == GLFW_KEY_S && action == GLFW_PRESS){
-        player.move(glm::vec3(0.0f,-2.0f,0.0f));
+        player.move(glm::vec3(0.0f,-5.0f,0.0f));
     }
     if (key == GLFW_KEY_Q  && action == GLFW_PRESS){
-        player.move(glm::vec3(0.0f,0.0f,2.0f));
+        player.move(glm::vec3(0.0f,0.0f,5.0f));
     }
     if (key == GLFW_KEY_E && action == GLFW_PRESS){
-        player.move(glm::vec3(0.0f,0.0f,-2.0f));
+        player.move(glm::vec3(0.0f,0.0f,-5.0f));
     }
+
+#define X 1
+#define Y 2
+#define Z 3
+
     if (key == GLFW_KEY_D  && action == GLFW_RELEASE){
-        player.brake();
+        player.brake(X);
     }
     if (key == GLFW_KEY_A && action == GLFW_RELEASE){
-        player.brake();
+        player.brake(X);
     }
     if (key == GLFW_KEY_W  && action == GLFW_RELEASE){
-        player.brake();
+        player.brake(Y);
     }
     if (key == GLFW_KEY_S && action == GLFW_RELEASE){
-        player.brake();
+        player.brake(Y);
     }
     if(key == GLFW_KEY_L && action == GLFW_PRESS){
         free_camera = !free_camera;

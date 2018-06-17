@@ -11,7 +11,7 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform int object_id;
-uniform vec3 lightPos;
+uniform vec3 light_pos;
 
 // Atributos de v�rtice que ser�o gerados como sa�da ("out") pelo Vertex Shader.
 // ** Estes ser�o interpolados pelo rasterizador! ** gerando, assim, valores
@@ -61,18 +61,21 @@ void main()
     normal = inverse(transpose(model)) * normal_coefficients;
     normal.w = 0.0;
 
-    vec3 norm = vec3(normalize(normal));
-    vec3 lightDir = normalize(lightPos - vec3(position_model));
-    float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * vec3(1.0f,1.0f,1.0f);
+    vec3 ambient = vec3(1.0f,1.0f,1.0f) * 0.2;
 
-    float specularStrength = 1.0; // this is set higher to better show the effect of Gouraud shading
-    vec3 viewDir = vec3(normalize((inverse(view) * vec4(0.0f,0.0f,0.0f,1.0f)) - position_world));
-    vec3 reflectDir = reflect(lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    vec3 specular = specularStrength * spec * vec3(1.0f,1.0f,1.0f);
+    vec3 n = vec3(normalize(normal));
+    vec3 l = normalize(light_pos - vec3(position_model));
+    float lambert = max(dot(n, l), 0.0);
+    vec3 diffuse = lambert * vec3(1.0f,1.0f,1.0f);
 
-    gouraud_color = diffuse + specular;
+    float I = 2.0;
+    float q = 16.0;
+    vec3 v = vec3(normalize((inverse(view) * vec4(0.0f,0.0f,0.0f,1.0f)) - position_world));
+    vec3 r = reflect(l, n);
+    float phong = pow(max(dot(v, r), 0.0), q);
+    vec3 specular = I * phong * vec3(1.0f,1.0f,1.0f);
+
+    gouraud_color = ambient + diffuse + specular;
 
     // Coordenadas de textura obtidas do arquivo OBJ (se existirem!)
     texcoords = texture_coefficients;

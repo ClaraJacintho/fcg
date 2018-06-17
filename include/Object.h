@@ -159,6 +159,14 @@ public:
                   << std::endl;
     }
 
+protected:
+    void setRotationRad(glm::vec3 rad_v){
+        this->rad = rad_v;
+
+        this->bbox_max = rotateBBox(this->bbox_max, this->rad);
+        this->bbox_min = rotateBBox(this->bbox_min, this->rad);
+    }
+
 };
 
 

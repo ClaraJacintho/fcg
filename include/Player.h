@@ -22,7 +22,7 @@ public:
     double last_update;
     int lives;
     bool collision;
-    bool braking;
+    glm::vec3 braking;
 
     Player() : Object("jet", "../../data/jet.obj")
     {
@@ -32,7 +32,7 @@ public:
         this->last_update = 0;
         this->lives = 3;
         this->collision = false;
-        this->braking = false;
+        this->braking = glm::vec3(1,1,1);
         this->acceleration = glm::vec3(0.0f,0.0f,-0.3f);
     }
 
@@ -48,19 +48,34 @@ public:
             cout << lives;
         }
 
-        if (braking){
+//        glm::vec3 rotation = this->rad;
+
+        if (braking.x) {
             this->speed.x = abs(speed.x) <= 0.1f ? 0.0f : this->speed.x - this->acceleration.x * dt;
-            this->speed.y = abs(speed.y) <= 0.1f ? 0.0f : this->speed.y - this->acceleration.y * dt;
-            this->speed.z = abs(speed.z) <= 0.1f ? 0.0f : this->speed.z - this->acceleration.z * dt;
+//            rotation.z -= (speed.x * M_PI / 180) * dt * 10;
         } else {
             this->speed.x += this->acceleration.x * dt;
-            this->speed.y += this->acceleration.y * dt;
-            this->speed.z += this->acceleration.z * dt;
+            this->speed.x = (speed.x >= MAX_SPEED ? MAX_SPEED : speed.x);
+//            rotation.z += (speed.x * M_PI / 180) * dt * 10;
         }
 
-        this->speed.x = (speed.x >= MAX_SPEED ? MAX_SPEED : speed.x);
-        this->speed.y = (speed.y >= MAX_SPEED ? MAX_SPEED : speed.y);
-        this->speed.z = (speed.z >= MAX_SPEED ? MAX_SPEED : speed.z);
+        if (braking.y) {
+            this->speed.y = abs(speed.y) <= 0.1f ? 0.0f : this->speed.y - this->acceleration.y * dt;
+//            rotation.x -= (speed.y * M_PI / 180) * dt * 10;
+        } else {
+            this->speed.y += this->acceleration.y * dt;
+            this->speed.y = (speed.y >= MAX_SPEED ? MAX_SPEED : speed.y);
+//            rotation.x += (speed.y * M_PI / 180) * dt * 10;
+        }
+
+        if (braking.z) {
+            this->speed.z = abs(speed.z) <= 0.1f ? 0.0f : this->speed.z - this->acceleration.z * dt;
+        } else {
+            this->speed.z += this->acceleration.z * dt;
+            this->speed.z = (speed.z >= MAX_SPEED ? MAX_SPEED : speed.z);
+        }
+
+//        rotation = glm::clamp(rotation,glm::vec3(-1.57,rotation.y,-1.57),glm::vec3(1.57,rotation.y,1.57));
 
         glm::vec3 newpos(this->pos.x + this->speed.x * dt,
                          this->pos.y + this->speed.y * dt,
@@ -76,16 +91,39 @@ public:
 //            this->acceleration.y = 0.0f;
 //        }
 
+//        this->rad = rotation;
         this->setPos(newpos);
     }
 
     void move(glm::vec3 direction) {
-        this->braking = false;
+        if(direction.x)
+            this->braking.x = 0;
+        if(direction.y)
+            this->braking.y = 0;
+        if(direction.z)
+            this->braking.z = 0;
         this->acceleration = direction;
     }
 
-    void brake() {
-        this->braking = true;
+#define X 1
+#define Y 2
+#define Z 3
+
+    void brake(int axis) {
+        switch(axis){
+            case X:
+                this->braking.x = 1;
+                break;
+            case Y:
+                this->braking.y = 1;
+                break;
+            case Z:
+                this->braking.z = 1;
+                break;
+            default:
+                break;
+        }
+//        this->braking = true;
 //        this->acceleration = -this->acceleration;
     }
 
