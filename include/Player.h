@@ -256,8 +256,8 @@ public:
 //            cout << plane_d <<endl;
 
         if(abs(distance) < projection){
-
-             cout << "plane boom" <<endl;
+            obj->destroyed = true;
+            cout << "plane boom" <<endl;
             return true;
         }
         return false;

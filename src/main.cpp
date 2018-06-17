@@ -33,7 +33,10 @@
 #define PLANE_WIDTH  0.7
 #define OBSTACLE_SPEED 0.03
 
-void randomize_position(vector<Object *> planes);
+glm::vec3 randomize_position(float camera_z);
+void initialize_position(vector<Object *> planes);
+void update_plane(vector<Object *> planes, float camera_z);
+
 bool free_camera = false;
 Player player;
 double dt = 0.0f;
@@ -231,7 +234,7 @@ int main(int argc, char* argv[]) {
 //    plane2.printBBox();
 
 
-    randomize_position(planes);
+    initialize_position(planes);
 
 
     // Inicializamos o código para renderização de texto.
@@ -298,6 +301,8 @@ int main(int argc, char* argv[]) {
             camera_view_vector = camera_lookat_l - camera_position_c;
             camera_up_vector = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
         }
+
+        update_plane(planes, camera_position_c.z);
 
         glm::mat4 view = Matrix_Camera_View(camera_position_c, camera_view_vector, camera_up_vector);
 
@@ -517,7 +522,8 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
     }
 }
 
-void randomize_position(vector<Object *> planes){
+void initialize_position(vector<Object *> planes){
+    srand(time(NULL));
     for (int i = 0; i < planes.size(); ++i) {
         float x = MIN + (rand() % (MAX +1) + MIN);
         cout << x; cout << " ";
@@ -532,4 +538,34 @@ void randomize_position(vector<Object *> planes){
     }
 }
 
+glm::vec3 randomize_position(float camera_z){
+    srand(time(NULL));
+    float x = MIN + (rand() % (MAX +1) + MIN);
+    //cout << x; cout << " ";
+    float y = MIN + (rand() % (MAX +1) + MIN);
+    cout << y; cout << " ";
+    float z =  camera_z - 15;
+    //cout << z << endl;
+
+    return glm::vec3(x,y,z);
+    //plane.setPos(glm::vec3(0.0f, -2.0f, 0.0f));
+}
+
+
+void update_plane(vector<Object *> planes, float camera_z){
+
+    for (int i = 0; i < planes.size(); ++i) {
+        if(planes[i]->pos.z > camera_z){
+            // player.destroyed = true;
+            cout << "killer: ";
+            cout << i << endl; cout << " ";
+            cout << camera_z;
+        }
+        if(planes[i]->destroyed){
+            planes[i]->setPos(randomize_position(camera_z));
+            planes[i]->destroyed = false;
+        }
+    }
+
+}
 
