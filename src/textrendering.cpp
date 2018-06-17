@@ -240,7 +240,7 @@ void TextRendering_PrintMatrix(GLFWwindow* window, glm::mat4 M, float x, float y
     TextRendering_PrintString(window, buffer, x, y - 3*lineheight, scale);
 }
 
-void TextRendering_PrintVector(GLFWwindow* window, glm::vec4 v, float x, float y, float scale = 1.0f)
+void  TextRendering_PrintVector(GLFWwindow* window, glm::vec4 v, float x, float y, float scale = 1.0f)
 {
     char buffer[10];
     float lineheight = TextRendering_LineHeight(window) * scale;

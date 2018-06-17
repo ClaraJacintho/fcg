@@ -32,8 +32,8 @@ public:
         this->last_update = 0;
         this->lives = 3;
         this->collision = false;
-        this->braking = true;
-        this->acceleration = glm::vec3(0.0f,0.0f,0.0f);
+        this->braking = false;
+        this->acceleration = glm::vec3(0.0f,0.0f,-0.3f);
     }
 
 //        virtual ~Player();
@@ -284,7 +284,6 @@ public:
                 cout << "plane boom" << endl;
                 return true;
             }
-            obj->printBBox();
            
         }
         return false;
@@ -293,7 +292,7 @@ public:
 
 
 
-    void /*gambiarra*/ fix_bbox(){
+    void fix_bbox(){
         float aux = this->bbox_min.x;
         this->bbox_min.x = this->bbox_max.x;
         this->bbox_max.x = aux;
@@ -303,7 +302,7 @@ public:
         this->bbox_max.z = aux;
     }
 
-    ///gambiarra to fiz the monstrous size of the jet hitbox
+
     void  update_bbox(){
         this->bbox_max.x = 10;
         this->bbox_max.y = 0.5; //The y axis is unchangeable for some reason......

@@ -33,10 +33,14 @@
 #define PLANE_WIDTH  0.7
 #define OBSTACLE_SPEED 0.03
 
-glm::vec3 randomize_position(float camera_z);
+glm::vec3 randomize_position(float camera_z, float space);
 void initialize_position(vector<Object *> planes);
 void update_plane(vector<Object *> planes, float camera_z);
+void update_obj(Object* cow, float camera_z, float space);
 
+bool game_restart = false;
+bool game_over = false;
+int points = 0;
 bool free_camera = false;
 Player player;
 double dt = 0.0f;
@@ -136,10 +140,7 @@ int main(int argc, char* argv[]) {
     Object horse (2,6,"horse","../../data/horse.obj");
     ComputeNormals(&(horse.model));
     BuildTrianglesAndAddToVirtualScene(&horse);
-    //sun.setScale(glm::vec3(0.005f,0.005f,0.005f));
-   // sun.setPos(glm::vec3(1.0f,1.0f,-2.0f));
-   // objects.push_back(&sun);
-   // sun.printBBox();
+
 
     Sphere earth(1,"sphere","../../data/sphere.obj");
     ComputeNormals(&(earth.model));
@@ -216,23 +217,6 @@ int main(int argc, char* argv[]) {
     objects.push_back(&plane5);
     planes.push_back(&plane5);
 
-//    Object plane(3,3, "plane","../../data/plane.obj");
-//    ComputeNormals(&(plane.model));
-//    BuildTrianglesAndAddToVirtualScene(&plane);
-//    plane.setScale(glm::vec3(2.0f,2.0f,2.0f));
-//    plane.setPos(glm::vec3(0.0f, -2.0f, 0.0f));
-//    objects.push_back(&plane);
-//    plane.printBBox();
-//
-//    Object plane2(3,3, "plane","../../data/plane.obj");
-//    ComputeNormals(&(plane2.model));
-//    BuildTrianglesAndAddToVirtualScene(&plane2);
-//    plane2.setRotation(glm::vec3(0.0f,0.0f,90.0f));
-//    plane2.setScale(glm::vec3(2.0f,2.0f,2.0f));
-//    plane2.setPos(glm::vec3(2.0f, 0.0f, 0.0f));
-//    objects.push_back(&plane2);
-//    plane2.printBBox();
-
 
     initialize_position(planes);
 
@@ -274,9 +258,15 @@ int main(int argc, char* argv[]) {
         // os shaders de vértice e fragmentos).
         shader.activate();
 
+        int player_pos = player.pos.z + 3.0f;
+
         for(int i=0; i < obstacles.size();i++){
-            obstacles[i]->update(player.pos.z + 3.0f, dt);
+            obstacles[i]->update( player_pos, dt);
         }
+
+        update_plane(planes,  player_pos);
+
+        update_obj(&cow, player_pos, 20);
 
         player.update(dt, objects);
 
@@ -301,8 +291,6 @@ int main(int argc, char* argv[]) {
             camera_view_vector = camera_lookat_l - camera_position_c;
             camera_up_vector = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
         }
-
-        update_plane(planes, camera_position_c.z);
 
         glm::mat4 view = Matrix_Camera_View(camera_position_c, camera_view_vector, camera_up_vector);
 
@@ -355,7 +343,7 @@ int main(int argc, char* argv[]) {
                     PushMatrix(model);
                         model = model * Matrix_Translate(player.pos.x  -3.75 ,player.pos.y-3.5f,player.pos.z);
                         PushMatrix(model);
-                            model = model *  Matrix_Scale(0.0025f,0.0025f,0.0025f);
+                            model = model *  Matrix_Scale(0.0015f,0.0015f,0.0015f);
                             shader.passValue("model", model);
                             shader.passValue("object_id", horse.obj_type);
                             DrawVirtualObject(horse.name.c_str());
@@ -365,7 +353,7 @@ int main(int argc, char* argv[]) {
                     PushMatrix(model);
                         model = model *  Matrix_Translate(player.pos.x  -3.25 ,player.pos.y-3.5f,player.pos.z);
                         PushMatrix(model);
-                            model = model *  Matrix_Scale(0.0025f,0.0025f,0.0025f);
+                            model = model *  Matrix_Scale(0.0015f,0.0015f,0.0015f);
                             shader.passValue("model", model);
                             shader.passValue("object_id", horse.obj_type);
                             DrawVirtualObject(horse.name.c_str());
@@ -375,7 +363,7 @@ int main(int argc, char* argv[]) {
                     PushMatrix(model);
                         model = model *  Matrix_Translate(player.pos.x  -2.75 ,player.pos.y-3.5f,player.pos.z);
                         PushMatrix(model);
-                            model = model *  Matrix_Scale(0.0025f,0.0025f,0.0025f);
+                            model = model *  Matrix_Scale(0.0015f,0.0015f, 0.0015f);
                             shader.passValue("model", model);
                             shader.passValue("object_id", horse.obj_type);
                             DrawVirtualObject(horse.name.c_str());
@@ -402,15 +390,29 @@ int main(int argc, char* argv[]) {
             glm::vec4 bbmin4(player.bbox_min.x, player.bbox_min.y, player.bbox_min.z, 0.0f);
             glm::vec4 bbmax4(player.bbox_max.x, player.bbox_max.y, player.bbox_max.z, 0.0f);
 //
-            TextRendering_PrintVector(window, pos4, 0, 0);
+//            TextRendering_PrintVector(window, pos4, 0, 0);
 //            TextRendering_PrintVector(window, bbmax4, -0.9, 0);
 //            TextRendering_PrintVector(window, bbmin4, -0.9, 0.9);
 
-            //TextRendering_PrintString(window, "Elle est pas belle, la vie?", -0.9, 0.9);
+            string pt_str = "Points: " + to_string(points);
+            TextRendering_PrintString(window, pt_str , -0.9, 0.9);
 
         }
         else{
-            TextRendering_PrintString(window, "GAME OVER!", 0, 0);
+            TextRendering_PrintString(window, "GAME OVER!", -0.06, 0);
+            game_over = true;
+            if(game_restart){
+                player.setPos(glm::vec3(0.0f,0.0f,0.0f));
+                earth.setPos(glm::vec3(1.0f,1.0f,-4.0f));
+                mars.setPos(glm::vec3(1.0f,2.0f,-9.0f));
+                player.destroyed = false;
+                player.speed = glm::vec3(0.0f);
+                player.lives = 3;
+                initialize_position(planes);
+                game_restart = false;
+            }
+
+
         }
 
         shader.deactivate();
@@ -521,40 +523,51 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
     if (key == GLFW_KEY_RIGHT){
         g_Strafing = (action != GLFW_RELEASE) ? 1 : 0;
     }
+    if(key == GLFW_KEY_SPACE && action == GLFW_PRESS){
+        if(game_over){
+            game_restart = true;
+        }
+    }
 }
 
 void initialize_position(vector<Object *> planes){
     srand(time(NULL));
-    for (int i = 0; i < planes.size(); ++i) {
+    planes[0]->setPos(glm::vec3(0.0f,0.0f, -4.0f));
+    float bbox_ym =planes[1]->bbox_min.y;
+    planes[0]->bbox_min. y = planes[0]->bbox_max.y;
+    planes[0]->bbox_max.y = bbox_ym;
+    for (int i = 1; i < planes.size(); ++i) {
         float x = MIN + (rand() % (MAX +1) + MIN);
-        cout << x; cout << " ";
         float y = MIN + (rand() % (MAX +1) + MIN);
-        cout << y; cout << " ";
-        float z = -i*5 - 2/*MIN + (rand() % (MAX +1) + MIN)*/;
-        cout << z << endl;
-        float bbox_ym = planes[i]->bbox_min.y;
+        float z = -i*15 - 2;
+        bbox_ym = planes[i]->bbox_min.y;
 
         planes[i]->bbox_min. y = planes[i]->bbox_max.y;
         planes[i]->bbox_max.y = bbox_ym;
         planes[i]->setPos(glm::vec3(x,y,z));
-
-        planes[i]->printBBox();
-
-        //plane.setPos(glm::vec3(0.0f, -2.0f, 0.0f));
     }
 }
 
-glm::vec3 randomize_position(float camera_z){
+glm::vec3 randomize_position(float camera_z, float space){
     srand(time(NULL));
     float x = MIN + (rand() % (MAX +1) + MIN);
-    //cout << x; cout << " ";
+
     float y = MIN + (rand() % (MAX +1) + MIN);
-    cout << y; cout << " ";
-    float z =  camera_z - 15;
-    //cout << z << endl;
+
+    float z =  camera_z - space;
 
     return glm::vec3(x,y,z);
-    //plane.setPos(glm::vec3(0.0f, -2.0f, 0.0f));
+}
+
+void update_obj(Object* cow, float camera_z, float space){
+    if(cow->pos.z > camera_z){
+        cow->setPos(randomize_position(camera_z,space));
+    }
+    if(cow->destroyed){
+        points+= 500;
+        cow->setPos(randomize_position(camera_z,space));
+        cow->destroyed = false;
+    }
 }
 
 
@@ -562,13 +575,15 @@ void update_plane(vector<Object *> planes, float camera_z){
 
     for (int i = 0; i < planes.size(); ++i) {
         if(planes[i]->pos.z > camera_z){
-            // player.destroyed = true;
-//            cout << "killer: ";
-//            cout << i << endl; cout << " ";
-//            cout << camera_z;
+             player.lives--;
+             if(player.lives <= 0){
+                 player.destroyed=true;
+             }
+             planes[i]->setPos(randomize_position(camera_z, 15));
         }
         if(planes[i]->destroyed){
-            planes[i]->setPos(randomize_position(camera_z));
+            points+=100;
+            planes[i]->setPos(randomize_position(camera_z, 15));
             planes[i]->destroyed = false;
         }
     }
