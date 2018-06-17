@@ -272,10 +272,10 @@ int main(int argc, char* argv[]) {
         shader.activate();
 
         for(int i=0; i < obstacles.size();i++){
-            obstacles[i]->update_position(player.pos.z + 3.0f);
+            obstacles[i]->update(player.pos.z + 3.0f, dt);
         }
 
-        player.update_player(dt, objects);
+        player.update(dt, objects);
 
         if(free_camera){
 

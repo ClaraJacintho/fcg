@@ -10,6 +10,7 @@
 #include <iostream>
 #include "Object.h"
 #include <ctime>
+
 class Obstacle {
     public:
         glm::vec3 movement;
@@ -20,8 +21,12 @@ class Obstacle {
             this->movement = glm::vec3(0.0f,0.0f,0.0f);
         }
 
-        void update_position(float z_axis){
-            glm::vec3 pos = this->obj->pos + this->movement;
+        void update(float z_axis, double dt){
+            glm::vec3 pos = this->obj->pos;
+            pos.x += this->movement.x * dt * 25;
+            pos.y += this->movement.y * dt * 25;
+            pos.z += this->movement.z * dt * 25;
+
             if(abs(pos.x) > RANGE || abs(pos.y) > RANGE){
                 this->movement.x = this->movement.x * -1;
                 this->movement.y = this->movement.y * -1;
