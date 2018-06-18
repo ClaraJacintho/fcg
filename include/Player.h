@@ -68,10 +68,12 @@ public:
 //            rotation.x += (speed.y * M_PI / 180) * dt * 10;
         }
 
-
-        this->speed.z += this->acceleration.z * dt;
-        this->speed.z = (speed.z >= MAX_SPEED ? MAX_SPEED : speed.z);
-
+        if (braking.z) {
+            this->speed.z = 0;
+        } else {
+            this->speed.z += this->acceleration.z * dt;
+            this->speed.z = (speed.z >= MAX_SPEED ? MAX_SPEED : speed.z);
+        }
 
 //        rotation = glm::clamp(rotation,glm::vec3(-1.57,rotation.y,-1.57),glm::vec3(1.57,rotation.y,1.57));
 
