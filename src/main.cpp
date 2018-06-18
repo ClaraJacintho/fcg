@@ -505,7 +505,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
 //    }
     if (key == GLFW_KEY_E && action == GLFW_PRESS){
 //        player.move(glm::vec3(0.0f,0.0f,-5.0f));
-        player.move(glm::vec3(0.0f,0.0f,-0.2f));
+        player.move(glm::vec3(0.0f,0.0f,-1.0f));
     }
 
 
@@ -549,7 +549,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
             game_restart = true;
         }
         if(tutorial){
-            player.move(glm::vec3(0.0f,0.0f,-0.2f));
+            player.move(glm::vec3(0.0f,0.0f,-1.0f));
             tutorial = false;
         }
     }
