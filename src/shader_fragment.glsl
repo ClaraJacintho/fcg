@@ -27,7 +27,7 @@ uniform mat4 projection;
 #define PLANE  3
 #define MARS 4
 #define COW 5
-#define SUN 6
+#define BUNNY 6
 uniform int object_id;
 
 // Par�metros da axis-aligned bounding box (AABB) do modelo
@@ -154,7 +154,7 @@ void main()
 //          color = diffuse + ambient + phong;
           color = gouraud_color * Kd;
     }
-    else if ( object_id == SUN ){
+    else if ( object_id == BUNNY ){
           Kd = vec3(0.08,0.4,0.8);
           Ks = vec3(0.8,0.8,0.8);
           Ka = vec3(1,1,1);

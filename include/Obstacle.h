@@ -42,7 +42,7 @@ class Obstacle {
             }
 
             if(pos.z > z_axis){    //behind the camera?
-                srand(time(NULL));
+
                 float x = MIN + (rand() % (MAX +1) + MIN);
                 float y = MIN + (rand() % (MAX +1) + MIN);
                 glm::vec3 pos1 =  glm::vec3(x, y,this->obj->pos.z -15.0f);

@@ -33,7 +33,7 @@ public:
         this->lives = 3;
         this->collision = false;
         this->braking = glm::vec3(1,1,1);
-        this->acceleration = glm::vec3(0.0f,0.0f,-0.3f);
+        this->acceleration = glm::vec3(0.0f,0.0f,-0.7f);
     }
 
 //        virtual ~Player();
@@ -68,12 +68,10 @@ public:
 //            rotation.x += (speed.y * M_PI / 180) * dt * 10;
         }
 
-        if (braking.z) {
-            this->speed.z = abs(speed.z) <= 0.1f ? 0.0f : this->speed.z - this->acceleration.z * dt;
-        } else {
-            this->speed.z += this->acceleration.z * dt;
-            this->speed.z = (speed.z >= MAX_SPEED ? MAX_SPEED : speed.z);
-        }
+
+        this->speed.z += this->acceleration.z * dt;
+        this->speed.z = (speed.z >= MAX_SPEED ? MAX_SPEED : speed.z);
+
 
 //        rotation = glm::clamp(rotation,glm::vec3(-1.57,rotation.y,-1.57),glm::vec3(1.57,rotation.y,1.57));
 

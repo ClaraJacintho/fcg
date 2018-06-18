@@ -38,6 +38,7 @@ void initialize_position(vector<Object *> planes);
 void update_plane(vector<Object *> planes, float camera_z);
 void update_obj(Object* cow, float camera_z, float space);
 
+float render_distance = 15;
 bool game_restart = false;
 bool game_over = false;
 int points = 0;
@@ -47,6 +48,7 @@ double dt = 0.0f;
 double lastFrame = 0.0f;
 int g_Walking = 0, g_Strafing = 0;
 int main(int argc, char* argv[]) {
+    srand(time(NULL));
     int success = glfwInit();
     if (!success) {
         fprintf(stderr, "ERROR: glfwInit() failed.\n");
@@ -120,7 +122,6 @@ int main(int argc, char* argv[]) {
     LoadTextureImage("../../data/tc-earth_daymap_surface.jpg");      // TextureImage0
     LoadTextureImage("../../data/tc-earth_nightmap_citylights.gif"); // TextureImage1
     LoadTextureImage("../../data/metal.png"); //TextureImage2
-    Skybox skybox("../../data/mp_jasper");  //não funciona ainda
 
     vector<Object*> objects;
     vector<Object*> planes;
@@ -135,7 +136,6 @@ int main(int argc, char* argv[]) {
     player.setPos(glm::vec3(0.0f,0.0f,0.0f));
     player.fix_bbox();
     objects.push_back(&player);
-    player.printBBox();
 
     Object horse (2,6,"horse","../../data/horse.obj");
     ComputeNormals(&(horse.model));
@@ -151,8 +151,6 @@ int main(int argc, char* argv[]) {
     Obstacle s(&earth);
     s.movement = glm::vec3(OBSTACLE_SPEED,0.0f,0.0f);
     obstacles.push_back(&s);
-    earth.printBBox();
-
 
     Sphere mars(4,"sphere","../../data/sphere.obj");
     ComputeNormals(&(mars.model));
@@ -163,18 +161,20 @@ int main(int argc, char* argv[]) {
     Obstacle s2(&mars);
     s2.movement = glm::vec3(-OBSTACLE_SPEED,0.0f,0.0f);
     obstacles.push_back(&s2);
-    mars.printBBox();
-
-    Tunnel tunnel;
-
 
     Object cow(2,5, "cow", "../../data/cow.obj");
     ComputeNormals(&(cow.model));
     BuildTrianglesAndAddToVirtualScene(&cow);
     cow.setScale(glm::vec3(1,1,1));
-    cow.setPos(glm::vec3(0.0f,-3,-2));
+    cow.setPos(glm::vec3(0.0f,-1,-5));
      objects.push_back(&cow);
-    cow.printBBox();
+
+    Object bunny(2,6, "bunny", "../../data/bunny.obj");
+    ComputeNormals(&(bunny.model));
+    BuildTrianglesAndAddToVirtualScene(&bunny);
+    bunny.setScale(glm::vec3(0.5,0.5,0.5 ));
+    bunny.setPos(glm::vec3(1,-3,-10));
+    objects.push_back(&bunny);
 
     Object plane(3,3, "plane","../../data/plane.obj");
     ComputeNormals(&(plane.model));
@@ -182,7 +182,6 @@ int main(int argc, char* argv[]) {
     plane.setRotation(glm::vec3(90.0f,00.0f,0.0f));
     plane.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
     objects.push_back(&plane);
-    planes.push_back(&plane);
 
     Object plane2(3,3, "plane","../../data/plane.obj");
     ComputeNormals(&(plane2.model));
@@ -265,8 +264,9 @@ int main(int argc, char* argv[]) {
         }
 
         update_plane(planes,  player_pos);
-
         update_obj(&cow, player_pos, 20);
+        update_obj(&bunny, player_pos, 50);
+
 
         player.update(dt, objects);
 
@@ -372,17 +372,7 @@ int main(int argc, char* argv[]) {
                 default:break;
         }
 
-            /*glDepthFunc(GL_LEQUAL);
-            skybox.shader.activate();
-            skybox.shader.passValue("view", glm::mat4(glm::mat3(view)));
-            skybox.shader.passValue("projection", projection);
-            glBindVertexArray(skybox.VAO);
-            glActiveTexture(GL_TEXTURE0 + 128);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.texture_map);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-            //glBindVertexArray(0);
-            glDepthFunc(GL_LESS);
-            skybox.shader.deactivate();*/
+
 
             TextRendering_ShowFramesPerSecond(window);
 
@@ -405,10 +395,10 @@ int main(int argc, char* argv[]) {
                 player.setPos(glm::vec3(0.0f,0.0f,0.0f));
                 earth.setPos(glm::vec3(1.0f,1.0f,-4.0f));
                 mars.setPos(glm::vec3(1.0f,2.0f,-9.0f));
-                player.destroyed = false;
                 player.speed = glm::vec3(0.0f);
                 player.lives = 3;
                 initialize_position(planes);
+                player.acceleration = glm::vec3(0.0f,0.0f,-0.3f);
                 game_restart = false;
             }
 
@@ -447,11 +437,6 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         g_UsePerspectiveProjection = false;
     }
 
-    // Se o usuário apertar a tecla H, fazemos um "toggle" do texto informativo mostrado na tela.
-    if (key == GLFW_KEY_H && action == GLFW_PRESS)
-    {
-        g_ShowInfoText = !g_ShowInfoText;
-    }
 
     // Se o usuário apertar a tecla R, recarregamos os shaders dos arquivos "shader_fragment.glsl" e "shader_vertex.glsl".
     if (key == GLFW_KEY_R && action == GLFW_PRESS)
@@ -499,13 +484,13 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
 #define Z 3
 
     if (key == GLFW_KEY_D  && action == GLFW_RELEASE){
-        player.brake(X);
+       // player.brake(X);
     }
     if (key == GLFW_KEY_A && action == GLFW_RELEASE){
-        player.brake(X);
+       // player.brake(X);
     }
     if (key == GLFW_KEY_W  && action == GLFW_RELEASE){
-        player.brake(Y);
+        //player.brake(Y);
     }
     if (key == GLFW_KEY_S && action == GLFW_RELEASE){
         player.brake(Y);
@@ -529,6 +514,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         g_Strafing = (action != GLFW_RELEASE) ? 1 : 0;
     }
     if(key == GLFW_KEY_SPACE && action == GLFW_PRESS){
+        cout << "A";
         if(game_over){
             game_restart = true;
         }
@@ -544,7 +530,7 @@ void initialize_position(vector<Object *> planes){
     for (int i = 1; i < planes.size(); ++i) {
         float x = MIN + (rand() % (MAX +1) + MIN);
         float y = MIN + (rand() % (MAX +1) + MIN);
-        float z = -i*15 - 2;
+        float z = -i*15 - 4;
         bbox_ym = planes[i]->bbox_min.y;
 
         planes[i]->bbox_min. y = planes[i]->bbox_max.y;
@@ -554,7 +540,6 @@ void initialize_position(vector<Object *> planes){
 }
 
 glm::vec3 randomize_position(float camera_z, float space){
-    srand(time(NULL));
     float x = MIN + (rand() % (MAX +1) + MIN);
 
     float y = MIN + (rand() % (MAX +1) + MIN);
@@ -569,27 +554,42 @@ void update_obj(Object* cow, float camera_z, float space){
         cow->setPos(randomize_position(camera_z,space));
     }
     if(cow->destroyed){
-        points+= 500;
+        if(cow->obj_type == 6){
+            points+= 600;
+        }else{
+            points+= 250;
+        }
         cow->setPos(randomize_position(camera_z,space));
         cow->destroyed = false;
     }
+
 }
 
 
 void update_plane(vector<Object *> planes, float camera_z){
-
+    bool update = false;
     for (int i = 0; i < planes.size(); ++i) {
         if(planes[i]->pos.z > camera_z){
-             player.lives--;
-             if(player.lives <= 0){
-                 player.destroyed=true;
+             points -=50;
+             planes[i]->setPos(randomize_position(camera_z, render_distance));
+             if(i== planes.size()-1){
+                update = true;
              }
-             planes[i]->setPos(randomize_position(camera_z, 15));
         }
         if(planes[i]->destroyed){
             points+=100;
-            planes[i]->setPos(randomize_position(camera_z, 15));
+            planes[i]->setPos(randomize_position(camera_z, render_distance));
             planes[i]->destroyed = false;
+            if(i==planes.size()-1){
+                update = true;
+            }
+        }
+
+        if(update){
+            float acc_z = player.acceleration.z;
+            acc_z*=1.05;
+            player.acceleration = glm::vec3(player.acceleration.x, player.acceleration.y, acc_z);
+            render_distance*=1.2;
         }
     }
 
