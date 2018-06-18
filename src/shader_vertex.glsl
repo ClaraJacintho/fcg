@@ -72,8 +72,9 @@ void main()
     float I = 4.0;
     float q = 16.0;
     vec3 v = vec3(normalize((inverse(view) * vec4(0.0f,0.0f,0.0f,1.0f)) - position_world));
-    vec3 r = reflect(l, n);
-    float phong = pow(max(dot(v, r), 0.0), q);
+    //vec3 r = reflect(l, n);
+	vec3 r = (l*-1) + (2*n)*(dot(n,l));
+    float phong = pow(max(dot(v, -r), 0.0), q);
     vec3 specular = I * phong * vec3(1.0f,1.0f,1.0f);
 
     gouraud_color = ambient + diffuse + specular;
