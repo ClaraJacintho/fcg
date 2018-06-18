@@ -38,6 +38,7 @@ void initialize_position(vector<Object *> planes);
 void update_plane(vector<Object *> planes, float camera_z);
 void update_obj(Object* cow, float camera_z, float space);
 
+bool tutorial = true;
 float render_distance = 15;
 bool game_restart = false;
 bool game_over = false;
@@ -166,15 +167,16 @@ int main(int argc, char* argv[]) {
     ComputeNormals(&(cow.model));
     BuildTrianglesAndAddToVirtualScene(&cow);
     cow.setScale(glm::vec3(1,1,1));
-    cow.setPos(glm::vec3(0.0f,-1,-5));
-     objects.push_back(&cow);
+    objects.push_back(&cow);
 
     Object bunny(2,6, "bunny", "../../data/bunny.obj");
     ComputeNormals(&(bunny.model));
     BuildTrianglesAndAddToVirtualScene(&bunny);
-    bunny.setScale(glm::vec3(0.5,0.5,0.5 ));
-    bunny.setPos(glm::vec3(1,-3,-10));
+    bunny.setScale(glm::vec3(0.4,0.4,0.4 ));
     objects.push_back(&bunny);
+
+    cow.setPos(glm::vec3(0.0f,-1,-5));
+    bunny.setPos(glm::vec3(1,-3,-10));
 
     Object plane(3,3, "plane","../../data/plane.obj");
     ComputeNormals(&(plane.model));
@@ -182,6 +184,7 @@ int main(int argc, char* argv[]) {
     plane.setRotation(glm::vec3(90.0f,00.0f,0.0f));
     plane.setScale(glm::vec3( PLANE_WIDTH, PLANE_HEIGHT,1.0f));
     objects.push_back(&plane);
+    planes.push_back(&plane);
 
     Object plane2(3,3, "plane","../../data/plane.obj");
     ComputeNormals(&(plane2.model));
@@ -247,29 +250,37 @@ int main(int argc, char* argv[]) {
         double curTime = glfwGetTime();
         dt = curTime - lastFrame;
         lastFrame = curTime;
+        if(tutorial||game_over){
+            // https://www.tug.org/pracjourn/2007-4/walden/color.pdf
+            glClearColor(1, 1, 1, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Definimos a cor do "fundo" do framebuffer como branco.
-        // https://www.tug.org/pracjourn/2007-4/walden/color.pdf
-        glClearColor(0.2f, 0.2f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            // Pedimos para a GPU utilizar o programa de GPU criado acima (contendo
+            // os shaders de vértice e fragmentos).
+            shader.activate();
+        }else {
+            // https://www.tug.org/pracjourn/2007-4/walden/color.pdf
+            glClearColor(0.2f, 0.2f, 0.3f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Pedimos para a GPU utilizar o programa de GPU criado acima (contendo
-        // os shaders de vértice e fragmentos).
-        shader.activate();
+            // Pedimos para a GPU utilizar o programa de GPU criado acima (contendo
+            // os shaders de vértice e fragmentos).
+            shader.activate();
 
-        int player_pos = player.pos.z + 3.0f;
 
-        for(int i=0; i < obstacles.size();i++){
-            obstacles[i]->update( player_pos, dt);
+            int player_pos = player.pos.z + 3.0f;
+
+            for (int i = 0; i < obstacles.size(); i++) {
+                obstacles[i]->update(player_pos, dt);
+            }
+
+            update_plane(planes, player_pos);
+            update_obj(&cow, player_pos, 20);
+            update_obj(&bunny, player_pos, 50);
+
+
+            player.update(dt, objects);
         }
-
-        update_plane(planes,  player_pos);
-        update_obj(&cow, player_pos, 20);
-        update_obj(&bunny, player_pos, 50);
-
-
-        player.update(dt, objects);
-
         if(free_camera){
 
             glm::vec4 camera_lookat_l    = glm::vec4(0.0f,0.0f,-1.0f,1.0f); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
@@ -314,8 +325,17 @@ int main(int argc, char* argv[]) {
 
         shader.passValue("view", view);
         shader.passValue("projection", projection);
+        if(tutorial) {
 
-        if(player.destroyed == false) {
+            TextRendering_PrintString(window, "Welcome to ANDROMEDA ANIMAL RESCUE" , -0.25, 0.3);
+            TextRendering_PrintString(window, "Use WASD to control the player" , -0.2, 0.2);
+            TextRendering_PrintString(window, "Planes are worth 100 points, missing them takes away 50 points" , -0.6, 0.1);
+            TextRendering_PrintString(window, "Bunnys are worth 500 points" , -0.15, 0.0);
+            TextRendering_PrintString(window, "Cows are worth 300 points" , -0.16, -0.1);
+            TextRendering_PrintString(window, "Beware the planets, hitting them takes away a life" , -0.4, -0.2);
+            TextRendering_PrintString(window, "If you miss too many planes you will die!" , -0.3, -0.3);
+
+        }else if(player.destroyed == false) {
 
             for (int i = 0; i < number_of_objects; i++) {
                 if (objects[i]->destroyed == false) {
@@ -328,6 +348,8 @@ int main(int argc, char* argv[]) {
                     shader.passValue("object_id", objects[i]->obj_type);
                     shader.passValue("lightPos", player.pos);
                     DrawVirtualObject(objects[i]->name.c_str());
+                    cout << objects[i]->name << endl;
+                    objects[i]->printBBox();
                 }
             }
 
@@ -390,6 +412,8 @@ int main(int argc, char* argv[]) {
         }
         else{
             TextRendering_PrintString(window, "GAME OVER!", -0.06, 0);
+            TextRendering_PrintString(window, "Press Space to restart" ,-0.3, -0.1);
+            TextRendering_PrintString(window, "Total points: " + to_string(points)   ,-0.2, -0.2);
             game_over = true;
             if(game_restart){
                 player.setPos(glm::vec3(0.0f,0.0f,0.0f));
@@ -399,10 +423,18 @@ int main(int argc, char* argv[]) {
                 player.lives = 3;
                 initialize_position(planes);
                 player.acceleration = glm::vec3(0.0f,0.0f,-0.3f);
+                player.destroyed = false;
+                cow.setPos(glm::vec3(0.0f,-1,-5));
+                bunny.setPos(glm::vec3(1,-3,-10));
+                points = 0;
                 game_restart = false;
+                game_over = false;
             }
 
+        }
 
+        if(points <= -1000){
+            player.destroyed = true;
         }
 
         shader.deactivate();
@@ -514,17 +546,20 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         g_Strafing = (action != GLFW_RELEASE) ? 1 : 0;
     }
     if(key == GLFW_KEY_SPACE && action == GLFW_PRESS){
-        cout << "A";
-        if(game_over){
+
+        if(game_over&&!tutorial){
             game_restart = true;
+        }
+        if(tutorial){
+            tutorial = false;
         }
     }
 }
 
 void initialize_position(vector<Object *> planes){
     srand(time(NULL));
-    planes[0]->setPos(glm::vec3(0.0f,0.0f, -4.0f));
-    float bbox_ym =planes[1]->bbox_min.y;
+    planes[0]->setPos(glm::vec3(0.0f,0.0f, -4));
+    float bbox_ym =planes[0]->bbox_min.y;
     planes[0]->bbox_min. y = planes[0]->bbox_max.y;
     planes[0]->bbox_max.y = bbox_ym;
     for (int i = 1; i < planes.size(); ++i) {
