@@ -22,6 +22,7 @@ out vec4 position_model;
 out vec4 normal;
 out vec2 texcoords;
 out vec3 gouraud_color;
+out vec3 lightpos;
 
 void main()
 {
@@ -61,14 +62,14 @@ void main()
     normal = inverse(transpose(model)) * normal_coefficients;
     normal.w = 0.0;
 
-    vec3 ambient = vec3(1.0f,1.0f,1.0f) * 0.2;
+    vec3 ambient = vec3(0.1f,0.1f,0.1f);
 
     vec3 n = vec3(normalize(normal));
     vec3 l = normalize(light_pos - vec3(position_model));
     float lambert = max(dot(n, l), 0.0);
     vec3 diffuse = lambert * vec3(1.0f,1.0f,1.0f);
 
-    float I = 2.0;
+    float I = 4.0;
     float q = 16.0;
     vec3 v = vec3(normalize((inverse(view) * vec4(0.0f,0.0f,0.0f,1.0f)) - position_world));
     vec3 r = reflect(l, n);
@@ -79,4 +80,6 @@ void main()
 
     // Coordenadas de textura obtidas do arquivo OBJ (se existirem!)
     texcoords = texture_coefficients;
+
+    lightpos = light_pos;
 }

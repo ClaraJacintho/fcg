@@ -15,6 +15,7 @@ in vec2 texcoords;
 
 // gouraud shading, calculado no vertex shader
 in vec3 gouraud_color;
+in vec3 lightpos;
 
 // Matrizes computadas no c�digo C++ e enviadas para a GPU
 uniform mat4 model;
@@ -145,20 +146,17 @@ void main()
     }
     else if ( object_id == COW ){
           Kd = vec3(0.5,0.5,0.5);
-//          Ks = vec3(0.8,0.8,0.8);
-//          Ka = vec3(0.04,0.2,0.4);
-//          q = 32.0;
-//          vec3 diffuse = Kd * (lambert + 0.01);
-//          vec3 ambient = Ka * Ia;
-//          vec3 phong =  Ks*I*(pow(max(0,dot(r,v)),q));
-//          color = diffuse + ambient + phong;
+
+          //por ser gouraud shading, a luz ja foi calculada no vertex shader
           color = gouraud_color * Kd;
     }
     else if ( object_id == BUNNY ){
-          Kd = vec3(0.08,0.4,0.8);
-          Ks = vec3(0.8,0.8,0.8);
-          Ka = vec3(1,1,1);
-          q = 32.0;
+          Kd = vec3(0.54,0.46,0.0);
+          Ks = vec3(0.2,0.2,0.2);
+          Ka = vec3(0.27,0.23,0.0);
+          q = 48.0;
+          r = (l*-1) + (2*n)*(dot(n,normalize(vec4(lightpos,0.0f) - position_model)));
+          r = -r;
           vec3 diffuse = Kd * (lambert + 0.01);
           vec3 ambient = Ka * Ia;
           vec3 phong =  Ks*I*(pow(max(0,dot(r,v)),q));

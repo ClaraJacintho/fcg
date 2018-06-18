@@ -359,11 +359,12 @@ int main(int argc, char* argv[]) {
             // sun.setPos(glm::vec3(1.0f,1.0f,-2.0f));
 
             model = Matrix_Identity();
+
             switch(player.lives){
 
                 case 3:
                     PushMatrix(model);
-                        model = model * Matrix_Translate(player.pos.x  -3.75 ,player.pos.y-3.5f,player.pos.z);
+                        model = model * Matrix_Translate(player.pos.x  -3.75 ,player.pos.y-3.5f+sin(curTime) * 0.1,player.pos.z);
                         PushMatrix(model);
                             model = model *  Matrix_Scale(0.0015f,0.0015f,0.0015f);
                             shader.passValue("model", model);
@@ -373,7 +374,7 @@ int main(int argc, char* argv[]) {
                     PopMatrix(model);
                 case 2:
                     PushMatrix(model);
-                        model = model *  Matrix_Translate(player.pos.x  -3.25 ,player.pos.y-3.5f,player.pos.z);
+                        model = model *  Matrix_Translate(player.pos.x  -3.25 ,player.pos.y-3.5f+sin(curTime+2) * 0.1,player.pos.z);
                         PushMatrix(model);
                             model = model *  Matrix_Scale(0.0015f,0.0015f,0.0015f);
                             shader.passValue("model", model);
@@ -383,7 +384,7 @@ int main(int argc, char* argv[]) {
                     PopMatrix(model);
                 case 1:
                     PushMatrix(model);
-                        model = model *  Matrix_Translate(player.pos.x  -2.75 ,player.pos.y-3.5f,player.pos.z);
+                        model = model *  Matrix_Translate(player.pos.x  -2.75 ,player.pos.y-3.5f+sin(curTime+4) * 0.1,player.pos.z);
                         PushMatrix(model);
                             model = model *  Matrix_Scale(0.0015f,0.0015f, 0.0015f);
                             shader.passValue("model", model);
@@ -504,25 +505,27 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
     if (key == GLFW_KEY_S && action == GLFW_PRESS){
         player.move(glm::vec3(0.0f,-5.0f,0.0f));
     }
-    if (key == GLFW_KEY_Q  && action == GLFW_PRESS){
-        player.move(glm::vec3(0.0f,0.0f,5.0f));
-    }
+//    if (key == GLFW_KEY_Q  && action == GLFW_PRESS){
+//        player.move(glm::vec3(0.0f,0.0f,5.0f));
+//    }
     if (key == GLFW_KEY_E && action == GLFW_PRESS){
-        player.move(glm::vec3(0.0f,0.0f,-5.0f));
+//        player.move(glm::vec3(0.0f,0.0f,-5.0f));
+        player.move(glm::vec3(0.0f,0.0f,-0.2f));
     }
+
 
 #define X 1
 #define Y 2
 #define Z 3
 
     if (key == GLFW_KEY_D  && action == GLFW_RELEASE){
-       // player.brake(X);
+        player.brake(X);
     }
     if (key == GLFW_KEY_A && action == GLFW_RELEASE){
-       // player.brake(X);
+        player.brake(X);
     }
     if (key == GLFW_KEY_W  && action == GLFW_RELEASE){
-        //player.brake(Y);
+        player.brake(Y);
     }
     if (key == GLFW_KEY_S && action == GLFW_RELEASE){
         player.brake(Y);

@@ -33,7 +33,7 @@ public:
         this->lives = 3;
         this->collision = false;
         this->braking = glm::vec3(1,1,1);
-        this->acceleration = glm::vec3(0.0f,0.0f,-0.7f);
+        this->acceleration = glm::vec3(0.0f,0.0f,-0.2f);
     }
 
 //        virtual ~Player();
@@ -125,70 +125,6 @@ public:
 //        this->acceleration = -this->acceleration;
     }
 
-    void move_up() {
-        this->speed.y += SPEED_INCREMENT;
-        if (turned_x == false) {
-            this->rad.x += TURN_ANGLE;
-            turned_x = true;
-        }
-    }
-
-    void move_down() {
-        this->speed.y -= SPEED_INCREMENT;
-        if (turned_x == false) {
-            this->rad.x -= TURN_ANGLE;
-            turned_x = true;
-        }
-    }
-
-    void move_left() {
-        this->speed.x -= SPEED_INCREMENT;
-        if (turned_z == false) {
-            this->rad.y += TURN_ANGLE;
-            turned_z = true;
-        }
-    }
-
-    void move_right() {
-        this->speed.x += SPEED_INCREMENT;
-        if (turned_z == false) {
-            this->rad.y -= TURN_ANGLE;
-            turned_z = true;
-        }
-    }
-
-    void move_foward(){
-        this->speed.z += SPEED_INCREMENT;
-    }
-
-    void move_backwards(){
-        this->speed.z -= SPEED_INCREMENT;
-    }
-
-    void unturn_left(){
-        this->rad.y -= TURN_ANGLE;
-        this->speed.x = 0;
-        turned_z = false;
-    }
-
-    void unturn_right(){
-        this->rad.y += TURN_ANGLE;
-        this->speed.x = 0;
-        turned_z = false;
-    }
-
-    void unturn_up(){
-        this->rad.x -= TURN_ANGLE;
-        this->speed.y = 0;
-        turned_x = false;
-    }
-
-    void unturn_down(){
-        this->rad.x += TURN_ANGLE;
-        this->speed.y = 0;
-        turned_x = false;
-    }
-
     bool checkCollision(vector<Object *> vect){
         bool ret = false;
         for(auto const obj : vect){
@@ -221,6 +157,7 @@ public:
         bool col_x = false;
         bool col_y = false;
         bool col_z = false;
+
         if(this->bbox_max.x >= obj->bbox_min.x
            && obj->bbox_max.x >= this->bbox_min.x) {
             col_x = true;
@@ -240,22 +177,22 @@ public:
         }
 
         if(col_x && col_y && col_z){
-           obj->destroyed = true;
+            obj->destroyed = true;
             printf("boom %s\n", obj->name.c_str());
             return true;
         }
+
         return false;
 
     }
 
+    //https://learnopengl.com/In-Practice/2D-Game/Collisions/Collision-detection
     bool checkCollisionSphere(Sphere* obj) {
-        //https://learnopengl.com/In-Practice/2D-Game/Collisions/Collision-detection
-
         glm::vec3 difference = obj->pos - this->pos;
-         glm::vec3 half_extents;
-         half_extents.x = abs(this->bbox_max.x - this->bbox_min.x) / 2;
-         half_extents.y = abs(this->bbox_max.y - this->bbox_min.y) / 2;
-         half_extents.z = abs(this->bbox_max.z - this->bbox_min.z) / 2;
+        glm::vec3 half_extents;
+        half_extents.x = abs(this->bbox_max.x - this->bbox_min.x) / 2;
+        half_extents.y = abs(this->bbox_max.y - this->bbox_min.y) / 2;
+        half_extents.z = abs(this->bbox_max.z - this->bbox_min.z) / 2;
 
         glm::vec3 clamped = glm::clamp(difference, -half_extents, half_extents);
         glm::vec3 closest = this->pos + clamped;
@@ -267,23 +204,15 @@ public:
                cout << "RIP" << endl;
                return false;
            }
-
             cout << "sphere boom" << endl;
             return true;
         }
-        return false;
 
+        return false;
     }
 
+    //https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
     bool checkCollisionPlane(Object* obj){
-        //https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
-
-        glm::vec3 pos_invz = this->pos;
-        pos_invz.z = -pos_invz.z;
-
-        glm::vec3 bbmin_invy = this->pos;
-        bbmin_invy.y = -bbmin_invy.y;
-
         glm::vec3 half_extents = this->bbox_max - this->pos;
 
         glm::vec3 half_extents_plane = obj->bbox_max - obj->pos;
@@ -298,12 +227,8 @@ public:
             p2 = p1 - glm::vec3(0.0f,2*half_extents_plane.y, 0.0f);
         }
 
-
         glm::vec3 plane_normal = cross((obj->pos - p2),(obj->pos - p1));
         plane_normal = glm::normalize(plane_normal); //If you dont do this, it works for specific cases
-//            plane_normal.z = -plane_normal.z;
-
-
 
         float projection =  half_extents.x * abs(plane_normal.x) +
                             half_extents.y * abs(plane_normal.y) +
@@ -314,19 +239,15 @@ public:
         float distance = glm::dot(this->pos,(plane_normal)) - plane_d;
 
         if(abs(distance) < projection){
-            bool a = checkCollisionAABB(obj);
-            if(a == true) {
+            if(checkCollisionAABB(obj)) {
                 obj->destroyed = true;
                 cout << "plane boom" << endl;
                 return true;
             }
-           
         }
+
         return false;
-
     }
-
-
 
     void fix_bbox(){
         float aux = this->bbox_min.x;
@@ -349,15 +270,9 @@ public:
         this->bbox_min.z = - 16;
     }
 
-protected:
-
 private:
     bool turned_x;
     bool turned_z;
-
-
-
-
 };
 
 #endif // PLAYER_H
