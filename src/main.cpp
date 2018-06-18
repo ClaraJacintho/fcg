@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE); //compatibilidade com macOS
 
     GLFWwindow* window;
-    window = glfwCreateWindow(800, 600, "INF01047 - PROJETO FINAL", NULL, NULL);
+    window = glfwCreateWindow(800, 600, "ANDROMEDA ANIMAL RESCUE", NULL, NULL);
     if (!window)
     {
         glfwTerminate();

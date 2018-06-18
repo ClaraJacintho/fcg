@@ -230,7 +230,7 @@ public:
         }
 
         glm::vec3 plane_normal = cross((obj->pos - p2),(obj->pos - p1));
-        plane_normal = glm::normalize(plane_normal); //If you dont do this, it works for specific cases
+        plane_normal = glm::normalize(plane_normal);
 
         float projection =  half_extents.x * abs(plane_normal.x) +
                             half_extents.y * abs(plane_normal.y) +
